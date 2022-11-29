@@ -36,6 +36,7 @@ const Register = () => {
           <TextField
             autoComplete="new-password"
             name="password"
+            type="password"
             required
             fullWidth
             id="password"
