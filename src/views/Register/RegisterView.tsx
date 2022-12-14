@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router-dom';
 import './RegisterView.css';
+import { Backdrop } from '@mui/material';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const Register = () => {
   };
 
   return (
+    <Backdrop open className="registerBackground">
       <Card className="registerCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
         <Typography id="registerTitle">Zarejestruj się</Typography>
         <Box component="form" className='registerContainer' onSubmit={handleSubmit}>
@@ -43,11 +45,13 @@ const Register = () => {
             label="Password"
             autoFocus
           />
-          <Button variant="contained" type="submit" sx={{ borderRadius: 10 }}>
+          <Button variant="contained" type="submit" sx={{ borderRadius: 10, fontFamily: 'revert' }}>
             Stwórz konto
           </Button>
         </Box>
       </Card>
+      <Typography id="logo">w4s.com</Typography>
+    </Backdrop>
   )
 }
 

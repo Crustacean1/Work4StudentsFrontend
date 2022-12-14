@@ -1,4 +1,4 @@
-import { Box, Link } from '@mui/material';
+import { Backdrop, Box, Link } from '@mui/material';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import TextField from '@mui/material/TextField';
@@ -29,6 +29,8 @@ const Login = () => {
   }, []);
 
   return (
+    <Backdrop open className="loginBackground">
+      <Typography id="loginLogo">w4s</Typography>
       <Card className="loginCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
         <Typography id="loginTitle">Zaloguj się</Typography>
         <Box component="form" className='loginContainer' onSubmit={handleSubmit}>
@@ -57,6 +59,7 @@ const Login = () => {
           <Link id="forgottenPassword" href="#">Nie pamiętasz hasła?</Link>
         </Box>
       </Card>
+    </Backdrop>
   )
 }
 
