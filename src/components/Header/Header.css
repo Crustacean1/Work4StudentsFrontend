@@ -1,0 +1,15 @@
+#header {
+    background-color: black;
+    height: 64px;
+}
+
+#headerLogo {
+    max-height: 50px;
+    max-width: 100px;
+    border-radius: 30px;
+    margin-right: auto;
+}
+
+.headerButton {
+    font-family: revert;
+}
