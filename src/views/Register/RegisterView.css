@@ -1,0 +1,42 @@
+.registerBackground {
+    width: 100%;
+    height: 100%;
+    background-image: url('../../assets/wave.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.registerCard {
+    padding: 10px;
+}
+
+#registerTitle {
+    padding: 20px;
+    padding-bottom: 0;
+    font-size: xx-large;
+    font-weight: 500;
+    font-family: revert;
+}
+
+#logo {
+    position: absolute;
+    bottom: 2%;
+    right: 2%;
+    font-size: 44px;
+    font-weight: 600;
+    font-family: revert;
+    color: white;
+}
+
+.registerContainer {
+    display: flex;
+    height: 300px;
+    width: 90%;
+    min-height: 250px;
+    min-width: 350px;
+    padding: 0 20px 0 20px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
