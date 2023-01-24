@@ -4,29 +4,27 @@ import Card from '@mui/material/Card';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { LoginData, useAuth } from '../../contexts/AuthContext';
 import './LoginView.css';
 
 const Login = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
+  const location = useLocation();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const redirect = location.state?.path || '/';
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const navData = {
-      email: data.get('email'),
-      password: data.get('password'),
+    const navData: LoginData = {
+      emailAddress: data.get('email')?.toString() || '',
+      password: data.get('password')?.toString() || '',
     };
-    localStorage.setItem('logged-in', 'true');
-    navigate("/", { replace: false, state: navData });
+    const loggedIn = await auth.login(navData);
+    if (loggedIn) navigate(redirect, { replace: true });
   };
-
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem('logged-in');
-    if (isLoggedIn && JSON.parse(isLoggedIn) === true) {
-      navigate("/", { replace: false, state: {} });
-    }
-  }, []);
 
   return (
     <Backdrop open className="loginBackground">

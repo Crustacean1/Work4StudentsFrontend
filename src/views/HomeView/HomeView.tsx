@@ -1,33 +1,16 @@
 import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import FilledInput from '@mui/material/FilledInput';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import './HomeView.css';
 import WorkOffer, { WorkOfferData } from '../../components/WorkOffer/WorkOffer';
 import Header from '../../components/Header/Header';
+import { useStore } from '../../stores/store';
 
 const Home = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('logged-in');
-    navigate("/login", { replace: false, state: {} });
-  };
-
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem('logged-in');
-    // if (!isLoggedIn) {
-    //   navigate("/login", { replace: false, state: {} });
-    // }
-  }, []);
+  const store = useStore();
 
   const testOffer: WorkOfferData = {
     title: 'Test',
@@ -84,19 +67,6 @@ const Home = () => {
           </CardActions>
         </Card>
         <WorkOffer offer={testOffer} />
-        <h2>Home - mock register/login:</h2>
-        {location.state ? (
-          <>
-            <h3>Email: {location.state.email}</h3>
-            <h3>Password: {location.state.password}</h3>
-          </>
-        ) : (
-          <>
-            <h3>Email: already logged in</h3>
-            <h3>Password: already logged in</h3>
-          </>
-        )}
-        <Button onClick={handleLogout}>Log out</Button>
       </Box>
     </Box>
   )
