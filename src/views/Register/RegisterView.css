@@ -18,6 +18,10 @@
   justify-content: center;
 }
 
+#selector {
+  margin: 5px;
+}
+
 #regFormTitle {
   padding: 10px 0 10px 0;
   font-size: xx-large;
@@ -52,6 +56,14 @@
 
 .regFormField {
   margin: 10px !important;
+}
+
+#regFormButton {
+  width: 20%;
+  min-width: 100px;
+  margin-top: 20px;
+  border-radius: 20px;
+  align-self: center;
 }
 
 @media (overflow-block: scroll) {

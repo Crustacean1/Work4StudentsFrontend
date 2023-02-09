@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { LoginData } from '../contexts/AuthContext';
 
 interface StoreState {
   token: string | null;

@@ -1,15 +1,14 @@
-import './ProfileForm.css';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
 import { Avatar, Backdrop, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
-
-const imgDefault = '/static/images/avatar/1.jpg';
-const radioDefault = 'student';
+import { imgDefault, radioDefault } from '../../const/profileForm.const';
+import './ProfileForm.css';
+import strings from '../../const/strings';
 
 const ProfileForm = () => {
   const [avatarSrc, setAvatarSrc] = useState<string>(imgDefault);
@@ -41,10 +40,10 @@ const ProfileForm = () => {
   return (
     <Backdrop open className="registerBackground">
       <Card className="registerCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
-        <Typography id="registerTitle">Zanim przejdziesz dalej...</Typography>
-        <Box sx={{ overflow: 'auto' }} component="form" id='profileFormContainer' onSubmit={handleSubmit}>
-          <FormControl sx={{ width: '100%' }}>
-            <FormLabel id="radioLabel">Rodzaj użytkownika:</FormLabel>
+        <Typography id="registerTitle">{strings.profileForm.title}</Typography>
+        <Box component="form" id='profileFormContainer' onSubmit={handleSubmit}>
+          <FormControl id="formControl">
+            <FormLabel id="radioLabel">{strings.profileForm.userType}</FormLabel>
             <RadioGroup
               aria-labelledby="radioLabel"
               defaultValue={radioDefault}
@@ -57,13 +56,13 @@ const ProfileForm = () => {
               <FormControlLabel value="entrepreneur" control={<Radio />} label="Pracodawca" />
               <FormControlLabel value="company" control={<Radio />} label="Firma" />
             </RadioGroup>
-            <Box sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Avatar id="pic" alt="Remy Sharp" src="/static/images/avatar/1.jpg" srcSet={avatarSrc} />
+            <Box id="picContainer">
+              <Avatar id="pic" alt="Profile picture" src={imgDefault} srcSet={avatarSrc} />
               <Button
                 variant="contained"
                 component="label"
               >
-                Wyślij zdjęcie
+                {strings.profileForm.sendImg}
                 <input
                   accept="image/*"
                   type="file"
@@ -85,7 +84,7 @@ const ProfileForm = () => {
           />
           {accountType === 'student' && (
             <Box>
-              <Typography>Twoje CV:</Typography>
+              <Typography>{strings.profileForm.CV}</Typography>
               <input
                 accept=".pdf,.doc,.docx"
                 type="file"
@@ -94,11 +93,11 @@ const ProfileForm = () => {
             </Box>
           )}
           <Button variant="contained" type="submit" sx={{ alignSelf: 'center', borderRadius: 10, fontFamily: 'revert' }}>
-            Kontynuuj
+            {strings.profileForm.continue}
           </Button>
         </Box>
       </Card>
-      <Typography id="logo">w4s.com</Typography>
+      <Typography id="logo">{strings.profileForm.logo}</Typography>
     </Backdrop>
   )
 }

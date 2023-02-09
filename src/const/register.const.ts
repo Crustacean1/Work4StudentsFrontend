@@ -53,4 +53,24 @@ export const data = {
       }
     ]
   },
+  profile: {
+    info: [
+      {
+        name: ['firstName', 'secondName'],
+        label: 'Imię'
+      },
+      {
+        name: ['surname'],
+        label: 'Nazwisko'
+      },
+      {
+        name: ['phoneNumber'],
+        label: 'Telefon'
+      },
+      {
+        name: ['emailAddress'],
+        label: 'E-mail'
+      },
+    ],
+  },
 };

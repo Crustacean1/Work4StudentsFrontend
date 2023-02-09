@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { createContext, useContext } from 'react';
+import { API } from '../const/API.const';
 import { useStore } from '../stores/store';
 
 export interface LoginData {
@@ -18,8 +19,6 @@ const authDefault: AuthContext = { token: null, register: async () => false,
   login: async () => false, logout: () => {} };
 
 const AuthContext = createContext<AuthContext>(authDefault);
-
-const API = 'https://cors-anywhere.herokuapp.com/http://studentdebil.chickenkiller.com:2137/api';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const token = useStore(state => state.token);

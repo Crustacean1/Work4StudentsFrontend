@@ -20,6 +20,17 @@
   font-family: revert;
 }
 
+#formControl {
+  width: 100%;
+}
+
+#picContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 #pic {
   width: 80px;
   height: 80px;
@@ -36,8 +47,9 @@
 }
 
 #profileFormContainer {
-  display: flex;
   width: 90%;
+  display: flex;
+  overflow: auto;
   min-height: 450px;
   min-width: 350px;
   padding: 0 20px 0 20px;

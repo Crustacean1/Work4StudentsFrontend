@@ -1,18 +1,29 @@
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import FilledInput from '@mui/material/FilledInput';
-import './HomeView.css';
-import WorkOffer, { WorkOfferData } from '../../components/WorkOffer/WorkOffer';
-import Header from '../../components/Header/Header';
+import ForwardIcon from '@mui/icons-material/Forward';
+import { useState } from 'react';
+import { Pagination } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import WorkOfferCard from '../../components/WorkOfferCard';
 import { useStore } from '../../stores/store';
+import { getOffers } from '../../functions/getOffers';
+import { WorkOfferData } from '../../const/types.const';
+import './HomeView.css';
+import strings from '../../const/strings';
 
 const Home = () => {
+  const [page, setPage] = useState<number>(1);
+
   const store = useStore();
+  const offers = getOffers({ page });
+  const navigate = useNavigate();
 
   const testOffer: WorkOfferData = {
+    id: '123',
     title: 'Test',
     description: 'Opis...',
     region: 'Warszawa, Śródmieście',
@@ -29,7 +40,6 @@ const Home = () => {
       width: '100%',
       height: '100%'
     }}>
-      <Header />
       <Box id="rootBox">
         <Card id="card" sx={{ boxShadow: 10 }}>
           <CardContent id="cardContent">
@@ -62,11 +72,32 @@ const Home = () => {
           </CardContent>
           <CardActions>
             <Button variant="contained" type="submit" id='searchButton'>
-              Szukaj
+              {strings.homeView.search}
             </Button>
           </CardActions>
         </Card>
-        <WorkOffer offer={testOffer} />
+        <Box textAlign="center">
+          <Button 
+            size="large"
+            id="addOffer"
+            color="inherit"
+            variant="contained"
+            endIcon={<ForwardIcon />}
+            onClick={() => navigate('/add-offer')}
+          >
+            {strings.homeView.addOffer}
+          </Button>
+        </Box>
+        <WorkOfferCard offer={testOffer} />
+        <Box sx={{ display: 'flex', margin: '20px' }}>
+          <Pagination 
+            count={10}
+            page={page}
+            color="primary"
+            sx={{ margin: 'auto' }} 
+            onChange={(_, page) => setPage(page)}
+          />
+        </Box>
       </Box>
     </Box>
   )

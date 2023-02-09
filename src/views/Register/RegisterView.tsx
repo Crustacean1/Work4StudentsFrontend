@@ -1,24 +1,13 @@
-import './RegisterView.css';
-import Card from '@mui/material/Card';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import { Backdrop, Grid, MenuItem, Select} from '@mui/material';
+import { Backdrop, Button, Card, Grid, MenuItem, Select, TextField, Typography } from '@mui/material';
+import strings from '../../const/strings';
 import { useAuth } from '../../contexts/AuthContext';
+import { RegisterData } from '../../const/types.const';
 import { AccountTypes, data } from '../../const/register.const';
-
-export type Register = {
-  firstName: string;
-  secondName: string;
-  surname: string;
-  phoneNumber: string;
-  emailAddress: string;
-  password: string;
-  repeatPassword: string;
-}
+import { registerValidation } from '../../utils/registerValidation';
+import './RegisterView.css';
 
 const Register = () => {
   const [accountType, setAccountType] = useState<AccountTypes>(AccountTypes.Student);
@@ -28,9 +17,6 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (data: any[]) => {
-    // event.preventDefault();
-    // const data = new FormData(event.currentTarget);
-
     const isStudent = accountType === AccountTypes.Student;
     const type = isStudent ? 'student' : 'employer';
     const studentFilter = ['nip', 'companyName', 'positionName'];
@@ -46,42 +32,9 @@ const Register = () => {
     if (registered) navigate("/login", { replace: false });
   };
 
-  const validate = (values: Register) => {
-    let errors: Register = {
-      firstName: '',
-      secondName: '',
-      surname: '',
-      phoneNumber: '',
-      emailAddress: '',
-      password: '',
-      repeatPassword: ''
-    };
+  const validate = (values: RegisterData) => {
+    let errors = registerValidation(values);
 
-    [values.firstName, values.secondName, values.surname].forEach((el) => {
-      if (el && !/^[a-zA-Z]+$/i.test(el)) {
-        const key = Object.values(values).findIndex(value => value === el);
-        errors[Object.keys(errors)[key] as keyof Register] = 'Niewłaściwe dane';
-      }
-    });
-
-    if (values.emailAddress && 
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.emailAddress)) {
-      errors.emailAddress = 'Niepoprawny adres e-mail';
-    }
-
-    if (values.phoneNumber && 
-      !/^[\d ]{9,}$/i.test(values.phoneNumber)) {
-      errors.phoneNumber = 'Niepoprawny numer telefonu';
-    }
-
-    if (values.password && values.password.length < 6) {
-      errors.password = 'Za krótkie hasło';
-    }
-
-    if (values.repeatPassword && values.password !== values.repeatPassword) {
-      errors.repeatPassword = 'Hasła niezgodne';
-    }
-  
     setErrorList(errors);
     return Object.values(errors).filter((error: any) => error).length ? errors : {};
   }
@@ -93,6 +46,9 @@ const Register = () => {
       surname: '',
       phoneNumber: '',
       emailAddress: '',
+      companyName: '',
+      nip: '',
+      positionName: '',
       password: '',
       repeatPassword: ''
     },
@@ -115,7 +71,7 @@ const Register = () => {
               fullWidth
               label={el.label}
               onChange={formik.handleChange}
-              error={errorList[el.name]}
+              error={!!errorList[el.name]}
             />
           ) : null
         )}
@@ -132,16 +88,17 @@ const Register = () => {
         >
           <Grid item xs={3}>
             <Select
-              sx={{ width: '90%', margin: '5px', borderRadius: '25px' }}
+              id="selector"
+              sx={{ width: '90%', borderRadius: '25px' }}
               value={accountType}
               onChange={(e) => setAccountType(e.target.value as AccountTypes)}
             >
-              <MenuItem value={AccountTypes.Student}>Student</MenuItem>
-              <MenuItem value={AccountTypes.Company}>Pracodawca</MenuItem>
+              <MenuItem value={AccountTypes.Student}>{strings.registerView.student}</MenuItem>
+              <MenuItem value={AccountTypes.Company}>{strings.registerView.company}</MenuItem>
             </Select>
           </Grid>
           <Grid item xs={6}>
-            <Typography align='center' id="regFormTitle">Zarejestruj się</Typography>
+            <Typography align='center' id="regFormTitle">{strings.registerView.title}</Typography>
           </Grid>
           <Grid item xs={3}></Grid>
         </Grid>
@@ -149,12 +106,12 @@ const Register = () => {
           <Grid id='regFormInputs'>
             {Object.values(data.columns).map((column) => gridElement(column))}
           </Grid>
-          <Button variant="contained" type="submit" sx={{ width: '20%', minWidth: '100px', marginTop: '20px', borderRadius: 10, fontFamily: 'revert', alignSelf: 'center' }}>
-            Stwórz konto
+          <Button variant="contained" type="submit" id="regFormButton">
+            {strings.registerView.createAccount}
           </Button>
         </Grid>
       </Card>
-      <Typography id="logo">w4s.com</Typography>
+      <Typography id="logo">{strings.registerView.logo}</Typography>
     </Backdrop>
   )
 }

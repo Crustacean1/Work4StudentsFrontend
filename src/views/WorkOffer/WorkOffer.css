@@ -1,0 +1,43 @@
+#offerCard {
+  width: 70%;
+  height: 50%;
+  margin: auto;
+  display: flex;
+  padding: 10px;
+  overflow: auto;
+  border-radius: 10px;
+  flex-direction: column;
+  background-color: white;
+}
+
+#offerHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#offerCompanyTitle {
+  font-size: large;
+  font-weight: bold;
+  text-align: right;
+}
+
+#offerCompanyDesc {
+  font-size: small;
+  text-align: right;
+}
+
+#offerTitle {
+  font-weight: 700;
+  max-width: 45%;
+}
+
+#offerDescTitle {
+  font-weight: 700;
+  color: #000000BF;
+}
+
+#offerButton {
+  margin: 10px 0 10px 0;
+}
