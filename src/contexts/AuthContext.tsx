@@ -35,7 +35,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             'accept': '*/*'
           }
         });
-      setToken(data);
       return true;
     } catch (err: any) {
       console.log(err.response);

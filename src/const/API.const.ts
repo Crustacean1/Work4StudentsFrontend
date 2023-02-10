@@ -1,1 +1,1 @@
-export const API = 'https://cors-anywhere.herokuapp.com/http://studentdebil.chickenkiller.com:8080/api';
+export const API = 'http://studentdebil.chickenkiller.com:2138/api';
