@@ -12,7 +12,8 @@ export const data = {
       },
       {
         name: 'secondName',
-        label: 'Drugie imię'
+        label: 'Drugie imię',
+        optional: true,
       },
       {
         name: 'surname',

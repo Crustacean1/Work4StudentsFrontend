@@ -67,7 +67,7 @@ const Register = () => {
               type={el.name.toLowerCase().includes('password') ? 'password' : ''}
               className='regFormField'
               name={el.name}
-              required
+              required={!el.optional}
               fullWidth
               label={el.label}
               onChange={formik.handleChange}

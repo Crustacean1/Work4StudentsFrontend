@@ -28,6 +28,7 @@ const Header = () => {
       <Toolbar>
         <Avatar
           id="headerLogo"
+          onClick={() => { location.pathname !== '/' && navigate('/') }}
           alt={strings.header.avatarText}
           src="https://spng.subpng.com/20180422/awe/kisspng-java-servlet-computer-icons-programming-language-java-5adce132b13b21.743013201524425010726.jpg"
         />
@@ -35,8 +36,11 @@ const Header = () => {
           <>
             {location.pathname.includes('profile') ? (
               <>
-                {location.pathname !== '/edit-profile' &&
-                  headerButton(strings.header.editProfile, () => navigate('/edit-profile'))}
+                {
+                  location.pathname !== '/edit-profile' 
+                    ? headerButton(strings.header.editProfile, () => navigate('/edit-profile'))
+                    : headerButton(strings.header.myProfile, () => navigate('/profile'))
+                }
                 {headerButton(strings.header.mainPage, () => navigate('/'))}
               </>
             ) : (
