@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import { Backdrop, Button, Card, Grid, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Autocomplete, Backdrop, Box, Button, Card, Grid, MenuItem, Select, TextField, Typography } from '@mui/material';
 import strings from '../../const/strings';
 import { useAuth } from '../../contexts/AuthContext';
 import { RegisterData } from '../../const/types.const';
 import { AccountTypes, data } from '../../const/register.const';
 import { registerValidation } from '../../utils/registerValidation';
 import './RegisterView.css';
+import { countries } from '../../const/countries.const';
 
 const Register = () => {
   const [accountType, setAccountType] = useState<AccountTypes>(AccountTypes.Student);
@@ -46,23 +47,69 @@ const Register = () => {
       surname: '',
       phoneNumber: '',
       emailAddress: '',
+      country: '',
+      city: '',
       companyName: '',
       nip: '',
       positionName: '',
       password: '',
-      repeatPassword: ''
+      repeatPassword: '',
+      region: '',
+      street: '',
+      building: '',
     },
     validate,
     onSubmit: (values) => {
       handleSubmit(Object.entries(values));
     },
-  })
+  });
+
+  const dropdownElement = (el: any) => {
+    return (
+      <Autocomplete
+        id="country"
+        key={el.name}
+        onChange={(_, value) => formik.setFieldValue('country', value?.label)}
+        sx={{ width: '100%', margin: '10px' }}
+        options={countries}
+        autoHighlight
+        getOptionLabel={(option) => option.label}
+        renderOption={(props, option) => (
+          <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+            <img
+              loading="lazy"
+              width="20"
+              src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+              srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+              alt=""
+            />
+            {option.label} ({option.code})
+          </Box>
+        )}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            required
+            name={el.name}
+            label={el.label}
+            error={!!errorList[el.name]}
+            onChange={(event) => formik.setFieldValue('country', event.target.value)}
+            inputProps={{
+              ...params.inputProps,
+              autoComplete: 'new-password',
+            }}
+          />
+        )}
+      />
+    );
+  };
 
   const gridElement = (column: any[]) => {
     return (
       <Grid item xs={12 / Object.keys(data.columns).length - 1}>
-        {column.map((el: any) => 
-          (!el.type || el.type && accountType === el.type) ? (
+        {column.map((el: any) => {
+          if (el.name === 'country') return dropdownElement(el);
+          return (!el.type || el.type && accountType === el.type) ? (
             <TextField
               type={el.name.toLowerCase().includes('password') ? 'password' : ''}
               className='regFormField'
@@ -74,7 +121,7 @@ const Register = () => {
               error={!!errorList[el.name]}
             />
           ) : null
-        )}
+        })}
       </Grid>
     )
   };

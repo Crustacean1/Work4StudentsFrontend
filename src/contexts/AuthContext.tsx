@@ -23,6 +23,7 @@ const AuthContext = createContext<AuthContext>(authDefault);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const token = useStore(state => state.token);
   const setToken = useStore(state => state.setToken);
+  const setUserType = useStore(state => state.setUserType);
 
   const register = async (regData: any, type: 'student' | 'employer') => {
     try {
@@ -54,7 +55,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             'accept': '*/*'
           }
         });
-      setToken(data);
+      setToken(data.jwtTokenValue);
+      setUserType(data.userType);
       return true;
     } catch (err: any) {
       console.log(err.response);

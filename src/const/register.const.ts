@@ -26,6 +26,14 @@ export const data = {
       {
         name: 'emailAddress',
         label: 'Adres e-mail'
+      },
+      {
+        name: 'country',
+        label: 'Państwo'
+      },
+      {
+        name: 'city',
+        label: 'Miasto'
       }
     ],
     secondColumn: [
@@ -51,6 +59,19 @@ export const data = {
       {
         name: 'repeatPassword',
         label: 'Powtórz hasło'
+      },
+      {
+        name: 'region',
+        label: 'Region'
+      },
+      {
+        name: 'street',
+        label: 'Ulica'
+      },
+      {
+        name: 'building',
+        label: 'Budynek',
+        optional: true,
       }
     ]
   },

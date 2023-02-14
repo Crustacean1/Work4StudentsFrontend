@@ -1,3 +1,4 @@
+import { countries } from "../const/countries.const";
 import strings from "../const/strings";
 import { RegisterData } from "../const/types.const";
 
@@ -8,15 +9,27 @@ export const registerValidation = (values: RegisterData) => {
     surname: '',
     phoneNumber: '',
     emailAddress: '',
+    country: '',
+    city: '',
     companyName: '',
     nip: '',
     positionName: '',
     password: '',
-    repeatPassword: ''
+    repeatPassword: '',
+    region: '',
+    street: '',
+    building: '',
   };
 
   [values.firstName, values.secondName, values.surname].forEach((el) => {
     if (el && !/^[a-zA-Z]+$/i.test(el)) {
+      const key = Object.values(values).findIndex(value => value === el);
+      errors[Object.keys(errors)[key] as keyof RegisterData] = strings.registerValidation.data;
+    }
+  });
+
+  [values.country, values.region, values.city].forEach((el) => {
+    if (el && !/^[a-zA-Z ]+$/i.test(el)) {
       const key = Object.values(values).findIndex(value => value === el);
       errors[Object.keys(errors)[key] as keyof RegisterData] = strings.registerValidation.data;
     }
@@ -49,6 +62,11 @@ export const registerValidation = (values: RegisterData) => {
     errors.positionName = strings.registerValidation.data;
   }
 
+  if (values.country && 
+    !countries.filter((country) => country.label === values.country).length) {
+    errors.country = strings.registerValidation.data;
+  }
+
   const checksumsNIP = [6, 5, 7, 2, 3, 4, 5, 6, 7];
   if (values.nip) {
     if (!/^[0-9]{10}$/i.test(values.nip)) {
@@ -56,12 +74,13 @@ export const registerValidation = (values: RegisterData) => {
     } else {
       let totalNIP = 0;
       checksumsNIP.forEach((checkSum, index) => {
-        console.log(checkSum, parseInt(values.nip[index]));
         totalNIP += checkSum * parseInt(values.nip[index]);
       });
       errors.nip = (totalNIP % 11 === parseInt(values.nip[9])) ? '' : strings.registerValidation.nip;
     }
   }
+
+  console.log(errors);
 
   return errors;
 }

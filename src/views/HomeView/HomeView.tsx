@@ -76,18 +76,20 @@ const Home = () => {
             </Button>
           </CardActions>
         </Card>
-        <Box textAlign="center">
-          <Button 
-            size="large"
-            id="addOffer"
-            color="inherit"
-            variant="contained"
-            endIcon={<ForwardIcon />}
-            onClick={() => navigate('/add-offer')}
-          >
-            {strings.homeView.addOffer}
-          </Button>
-        </Box>
+        {store.userType != 0 && (
+          <Box textAlign="center">
+            <Button 
+              size="large"
+              id="addOffer"
+              color="inherit"
+              variant="contained"
+              endIcon={<ForwardIcon />}
+              onClick={() => navigate('/add-offer')}
+            >
+              {strings.homeView.addOffer}
+            </Button>
+          </Box>
+        )}
         {data?.items && data.items.map((item: any) => <WorkOfferCard key={item.id} offer={item} />) }
         <Box sx={{ display: 'flex', margin: '20px' }}>
           <Pagination 
