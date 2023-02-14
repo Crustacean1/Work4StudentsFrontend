@@ -1,0 +1,25 @@
+#addOfferCard {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+  height: 60%;
+  max-height: 600px;
+  overflow: auto;
+}
+
+#addOfferContainer {
+  margin: auto;
+  justify-content: center;
+}
+
+#addOfferButton {
+  width: 20%;
+  min-width: 100px;
+  margin-top: 15px;
+  align-self: center;
+  border-radius: 10px;
+}

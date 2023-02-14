@@ -1,0 +1,66 @@
+#workCard {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    background-color: white;
+    margin-top: 10px;
+    border-radius: 10px;
+    padding: 0 10px 0 10px;
+}
+
+.flexRow {
+    display: flex;
+    flex-direction: row;
+}
+
+#workCardContent {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+#offerTitle {
+    font-size: larger;
+    font-weight: bold;
+}
+
+#offerDesc {
+    font-size: medium;
+}
+
+#companyTitle {
+    font-size: large;
+    font-weight: bold;
+}
+
+#companyDesc {
+    font-size: small;
+}
+
+#companyLogo {
+    align-self: center;
+    margin-right: 10px;
+}
+
+#footnote {
+    border-top: 1px solid #000;
+    justify-content: space-between;
+    margin-top: 5px;
+    padding-top: 5px;
+}
+
+#footnote .MuiSvgIcon-root {
+    font-size: medium;
+    color: #6092f0;
+}
+
+#footnote .MuiTypography-root  {
+    font-size: x-small;
+    align-self: center;
+}
+
+#workCard .MuiCardActions-root {
+    align-items: baseline !important;
+    margin-top: 10px;
+}

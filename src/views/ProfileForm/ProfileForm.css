@@ -1,0 +1,60 @@
+.registerBackground {
+  width: 100%;
+  height: 100%;
+  background-image: url('../../assets/wave.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* overflow: auto; */
+}
+
+.registerCard {
+  padding: 10px;
+  margin-top: 50px;
+}
+
+#registerTitle {
+  padding: 20px;
+  padding-bottom: 0;
+  font-size: xx-large;
+  font-weight: 500;
+  font-family: revert;
+}
+
+#formControl {
+  width: 100%;
+}
+
+#picContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#pic {
+  width: 80px;
+  height: 80px;
+}
+
+#logo {
+  position: absolute;
+  bottom: 2%;
+  right: 2%;
+  font-size: 44px;
+  font-weight: 600;
+  font-family: revert;
+  color: white;
+}
+
+#profileFormContainer {
+  width: 90%;
+  display: flex;
+  overflow: auto;
+  min-height: 450px;
+  min-width: 350px;
+  padding: 0 20px 0 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-evenly;
+}

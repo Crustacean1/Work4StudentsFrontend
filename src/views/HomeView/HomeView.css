@@ -1,0 +1,71 @@
+body {
+    color: black;
+}
+
+html, body, #root {
+    padding: 0px !important;
+    margin: 0px !important;
+    height: 100vh;
+    width: 100vw;
+}
+
+#rootBox {
+    padding-top: 64px;
+}
+
+#card {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    background-color: #7d66e3;
+    margin-top: 10px;
+    border-radius: 10px;
+    padding: 0 10px 0 10px;
+}
+
+#cardContent {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+#addOffer { 
+    background-color: #7D66E3;
+    color: white;
+    font-weight: 600;
+    margin: 15px 0 10px 0;
+    width: 75%;
+}
+
+.MuiFilledInput-root {
+    background-color: aliceblue !important;
+    border-left: 1px solid #000;
+    border-radius: 0px !important;
+}
+
+.leftInputSide {
+    border-top-left-radius: 30px !important;
+    border-bottom-left-radius: 30px !important;
+}
+
+.rightInputSide {
+    border-top-right-radius: 30px !important;
+    border-bottom-right-radius: 30px !important;
+}
+
+.MuiFilledInput-input {
+    padding: 10px !important;
+    margin: 0 0 0 5px !important;
+}
+
+#searchButton {
+    font-family: revert;
+    font-size: large;
+    border-radius: 20px;
+    padding: 10px 30px 10px 30px;
+}
+
+::placeholder {
+    text-align: center;
+}
