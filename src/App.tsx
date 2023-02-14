@@ -11,11 +11,11 @@ import AddOffer from "./views/AddOffer/AddOffer";
 import WorkOffer from "./views/WorkOffer/WorkOffer";
 import Register from './views/Register/RegisterView';
 import Profile from "./views/ProfileView/ProfileView";
+import CompanyRoutes from "./components/CompanyRoutes";
 import ProfileEdit from "./views/ProfileEdit/ProfileEdit";
 import ProfileForm from "./views/ProfileForm/ProfileForm";
 import { AuthProvider } from './contexts/AuthContext';
 import './App.css'
-import CompanyRoutes from "./components/CompanyRoutes";
 
 function App() {
 

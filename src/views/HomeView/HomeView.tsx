@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { Pagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import WorkOfferCard from '../../components/WorkOfferCard';
-import { useStore } from '../../stores/store';
+import { UserType, useStore } from '../../stores/store';
 import { getOffers } from '../../functions/getOffers';
 import './HomeView.css';
 import strings from '../../const/strings';
@@ -76,7 +76,7 @@ const Home = () => {
             </Button>
           </CardActions>
         </Card>
-        {store.userType != 0 && (
+        {store.userType != UserType.Student && (
           <Box textAlign="center">
             <Button 
               size="large"

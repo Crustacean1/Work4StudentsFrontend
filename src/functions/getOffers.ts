@@ -1,28 +1,31 @@
 import axios from 'axios';
 import { API } from '../const/API.const';
+import { useStore } from '../stores/store';
 
 interface GetOffersPayload {
   page: number;
-  keywords: string;
-  categories: string;
+  Keywords: string;
+  Categories: string;
   size?: number;
 }
 
 export const DEFAULT_PAGE_SIZE = 10;
 
-export const getOffers = async ({ page, keywords, categories, size }: GetOffersPayload) => {
+export const getOffers = async ({ page, Keywords, Categories, size }: GetOffersPayload) => {
   try {
+    const store = useStore.getState();
     const { data } = await axios
     .get(`${API}/offers`, 
     {
       headers: {
         'Content-Type': 'application/json',
-        'accept': '*/*'
+        'accept': '*/*',
+        'Authorization': 'Bearer ' + store.token
       },
       params: {
         page,
-        keywords,
-        categories,
+        Keywords,
+        Categories,
         pageSize: size || DEFAULT_PAGE_SIZE
       }
     });

@@ -21,9 +21,8 @@ const authDefault: AuthContext = { token: null, register: async () => false,
 const AuthContext = createContext<AuthContext>(authDefault);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const store = useStore();
   const token = useStore(state => state.token);
-  const setToken = useStore(state => state.setToken);
-  const setUserType = useStore(state => state.setUserType);
 
   const register = async (regData: any, type: 'student' | 'employer') => {
     try {
@@ -55,8 +54,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             'accept': '*/*'
           }
         });
-      setToken(data.jwtTokenValue);
-      setUserType(data.userType);
+      store.setToken(data.jwtTokenValue);
+      store.setUserId(data.userId);
+      store.setUserType(data.userType);
       return true;
     } catch (err: any) {
       console.log(err.response);
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const logout = () => {
-    setToken(null);
+    store.setToken(null);
   }
 
   return (

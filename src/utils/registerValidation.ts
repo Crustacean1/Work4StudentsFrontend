@@ -80,6 +80,8 @@ export const registerValidation = (values: RegisterData) => {
     }
   }
 
+  // Country autocomplete has issues with formik, workaround added
+  errors.building = '';
   console.log(errors);
 
   return errors;
