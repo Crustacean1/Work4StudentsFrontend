@@ -1,3 +1,5 @@
+import { WorkOfferData } from "./types.const";
+
 export const offerFormData = {
   column: [
     {
@@ -19,8 +21,24 @@ export const offerFormData = {
       halfSize: true,
     },
     {
-      name: 'address',
-      label: 'Miejsce pracy'
+      name: 'country',
+      label: 'Państwo',
+      halfSize: true,
+    },
+    {
+      name: 'region',
+      label: 'Region',
+      halfSize: true,
+    },
+    {
+      name: 'city',
+      label: 'Miejscowość',
+      halfSize: true,
+    },
+    {
+      name: 'street',
+      label: 'Ulica',
+      halfSize: true,
     },
     {
       name: 'description',
@@ -28,4 +46,24 @@ export const offerFormData = {
       multiline: true
     },
   ]
+};
+
+export const emptyOffer: WorkOfferData = {
+  id: '',
+  address: {
+    country: '',
+    region: '',
+    city: '',
+    street: '',
+    building: '',
+  },
+  title: '',
+  description: '',
+  payRange: {
+    min: 0,
+    max: 0,
+  },
+  workingHours: [],
+  creationDate: '',
+  role: '',
 };

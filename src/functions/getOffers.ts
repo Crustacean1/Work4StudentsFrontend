@@ -1,30 +1,35 @@
 import axios from 'axios';
-import { useQuery } from 'react-query';
 import { API } from '../const/API.const';
 
 interface GetOffersPayload {
   page: number;
+  keywords: string;
+  categories: string;
   size?: number;
 }
 
 export const DEFAULT_PAGE_SIZE = 10;
 
-export const getOffers = async ({ page, size }: GetOffersPayload) => {
-  return useQuery(["offers", page], async () => {
-    try {
-      const { data } = await axios
-      .get(`${API}/joboffer?page=${page}&pageSize=${size || DEFAULT_PAGE_SIZE}`, 
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'accept': '*/*'
-        }
-      });
+export const getOffers = async ({ page, keywords, categories, size }: GetOffersPayload) => {
+  try {
+    const { data } = await axios
+    .get(`${API}/offers`, 
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'accept': '*/*'
+      },
+      params: {
+        page,
+        keywords,
+        categories,
+        pageSize: size || DEFAULT_PAGE_SIZE
+      }
+    });
 
-      return data;
-    } catch (err: any) {
-      console.log(err.response);
-      return [];
-    }
-  }, { keepPreviousData: true });
+    return data;
+  } catch (err: any) {
+    console.log(err.response);
+    return [];
+  }
 };

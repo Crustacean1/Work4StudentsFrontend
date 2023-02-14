@@ -11,15 +11,28 @@ export interface RegisterData {
   repeatPassword: string;
 }
 
-export interface WorkOfferData {
+export interface WorkOfferCardData {
   id: string;
+  address: {
+    country: string;
+    region: string;
+    city: string;
+    street: string;
+    building: string;
+  };
   title: string;
   description: string;
-  region: string;
-  company: {
-    name: string;
-    logo: string;
+  payRange: {
+    min: number;
+    max: number;
   };
-  date: number;
-  isFavourite: boolean;
+  workingHours: {
+    start: string;
+    end: string;
+  }[];
+  creationDate: string;
+}
+
+export interface WorkOfferData extends WorkOfferCardData {
+  role: string;
 }
