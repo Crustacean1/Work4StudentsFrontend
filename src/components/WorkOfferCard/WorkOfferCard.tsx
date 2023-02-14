@@ -9,10 +9,10 @@ import FlashOnIcon from '@mui/icons-material/FlashOn';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import { useNavigate } from 'react-router-dom';
 import { toDateTime } from '../../utils/timeConverter';
-import { WorkOfferData } from '../../const/types.const';
+import { WorkOfferCardData } from '../../const/types.const';
 import './WorkOfferCard.css';
 
-const WorkOfferCard = ({ offer }: { offer: WorkOfferData }) => {
+const WorkOfferCard = ({ offer }: { offer: WorkOfferCardData }) => {
   const navigate = useNavigate();
 
   return (
@@ -25,17 +25,17 @@ const WorkOfferCard = ({ offer }: { offer: WorkOfferData }) => {
           {offer.description}
         </Typography>
         <Box className="flexRow">
-          <Avatar
+          {/* <Avatar
             id="companyLogo"
             alt="The company's logo."
             src={offer.company.logo}
-          />
+          /> */}
           <Box>
             <Typography id="companyTitle">
-              {offer.company.name}
+              {offer.title}
             </Typography> 
             <Typography id="companyDesc" color="text.secondary">
-              {offer.region}
+              {offer.address.region}
             </Typography> 
           </Box>
         </Box>
@@ -47,13 +47,13 @@ const WorkOfferCard = ({ offer }: { offer: WorkOfferData }) => {
             </Typography> 
           </Box>
           <Typography color="text.secondary">
-            {toDateTime(offer.date)}
+            {toDateTime(new Date(offer.creationDate).getTime() / 1000)}
           </Typography> 
         </Box>
       </CardContent>
-      <CardActions>
+      {/* <CardActions>
         {offer.isFavourite ? <StarIcon /> : <StarOutlineIcon />}
-      </CardActions>
+      </CardActions> */}
     </Card>
   )
 }
