@@ -25,7 +25,7 @@ const Home = () => {
 
   const { data, refetch } = useQuery({
     queryKey: ['offers', page],
-    queryFn: () => getOffers({ page, keywords: searchText, categories: category }),
+    queryFn: () => getOffers({ page, Keywords: searchText, Categories: category }),
     keepPreviousData : true
   });
 

@@ -16,6 +16,26 @@ export interface RegisterData {
   building: string;
 }
 
+export interface ProfileData {
+  avaiability: null;
+  building: string;
+  city: string;
+  country: string;
+  emailAddress: string;
+  exceptionMessage: null;
+  firstName: string;
+  phoneNumber: string;
+  photo: null
+  profileId: string;
+  rating: number;
+  region: string;
+  resume: null
+  secondName: string;
+  street: string;
+  studentId: string;
+  surname: string;
+}
+
 export interface WorkOfferCardData {
   id: string;
   address: {

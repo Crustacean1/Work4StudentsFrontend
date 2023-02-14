@@ -8,12 +8,12 @@ export const getProfile = async () => {
     const { data } = await axios
         .get(`${API}/Profiles/get/${
           store.userType === UserType.Student 
-            ? `studentByStudentId?studentId=${store.userId}` 
-            : `employerByEmployerId?employerId=${store.userId}`}`, 
+            ? `studentByStudentId/${store.userId}` 
+            : `employerByEmployerId/${store.userId}`}`, 
     {
       headers: {
-        'Content-Type': 'application/json',
         'accept': '*/*',
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + store.token
       },
     });

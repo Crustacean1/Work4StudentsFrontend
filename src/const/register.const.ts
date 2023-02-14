@@ -3,7 +3,30 @@ export enum AccountTypes {
   Company
 }
 
-export const data = {
+type Test = {
+  columns: {
+    firstColumn: {
+      name: string;
+      label: string;
+      optional?: boolean;
+    }[];
+    secondColumn: {
+      name: string;
+      label: string;
+      optional?: boolean;
+      type?: AccountTypes;
+    }[];
+  };
+  profile: {
+    info: {
+      name: string[];
+      label: string;
+      delimiter?: string[];
+    }[];
+  };
+};
+
+export const data: Test = {
   columns: {
     firstColumn: [
       {
@@ -93,6 +116,19 @@ export const data = {
         name: ['emailAddress'],
         label: 'E-mail'
       },
+      {
+        name: ['country'],
+        label: 'Państwo'
+      },
+      {
+        name: ['region'],
+        label: 'Region'
+      },
+      {
+        name: ['city', 'street', 'building'],
+        label: 'Adres',
+        delimiter: [',', '', '']
+      }
     ],
   },
 };
