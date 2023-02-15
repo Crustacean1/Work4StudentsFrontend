@@ -49,6 +49,11 @@ export const offerFormData = {
 };
 
 export const emptyOffer: WorkOfferData = {
+  applied: false,
+  company: {
+    name: '',
+    nip: ''
+  },
   id: '',
   address: {
     country: '',
