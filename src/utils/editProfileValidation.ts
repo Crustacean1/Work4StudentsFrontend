@@ -18,9 +18,15 @@ export const editProfileValidation = (values: EditProfilePayload) => {
     ResumeFile: ''
   };
 
-  [values.Description, values.Education, values.Region,
-    values.City].forEach((el) => {
-    if (el && !/^[a-zA-Z ]+$/i.test(el)) {
+  [values.Education, values.Region, values.City].forEach((el) => {
+    if (el && !/^[\s\p{L}]+$/iu.test(el)) {
+      const key = Object.values(values).findIndex(value => value === el);
+      errors[Object.keys(errors)[key] as keyof EditProfileData] = strings.registerValidation.data;
+    }
+  });
+
+  [values.Description].forEach((el) => {
+    if (el && !/^[\s\p{L}\d]+$/iu.test(el)) {
       const key = Object.values(values).findIndex(value => value === el);
       errors[Object.keys(errors)[key] as keyof EditProfileData] = strings.registerValidation.data;
     }

@@ -9,10 +9,13 @@ import { EditProfileData, EditProfilePayload } from '../../const/types.const';
 import { editProfileValidation } from '../../utils/editProfileValidation';
 import { editProfile } from '../../functions/editProfile';
 import { getBase64 } from '../../utils/base64';
+import { UserType, useStore } from '../../stores/store';
 
 const ProfileEdit = () => {
   const [avatarSrc, setAvatarSrc] = useState<string>(imgDefault);
   const [errorList, setErrorList] = useState<any>({});
+
+  const store = useStore();
 
   const previewImg = (event: any) => {
     if (event.target.files && event.target.files[0]) {
@@ -78,7 +81,7 @@ const ProfileEdit = () => {
         id="country"
         key={el.name}
         onChange={(_, value) => profileFormik.setFieldValue('Country', value?.label)}
-        sx={{ width: el.halfSize ? '44%' : '90%', margin: 'auto', marginLeft: '10px', marginRight: '10px' }}
+        sx={{ width: el.halfSize ? '44%' : '90%', margin: '10px' }}
         options={countries}
         autoHighlight
         getOptionLabel={(option) => option.label}
@@ -150,15 +153,17 @@ const ProfileEdit = () => {
             </Button>
           </Box>
           {Object.values(profileFormData.column).map((el) => gridElement(el))}
-          <Box id="editCV">
-            <Typography>{strings.profileForm.CV}</Typography>
-            <input
-              accept=".pdf,.doc,.docx"
-              type="file"
-              name="ResumeFile"
-              onChange={uploadCV}
-            />
-          </Box>
+          {store.userType === UserType.Student && (
+            <Box id="editCV">
+              <Typography>{strings.profileForm.CV}</Typography>
+              <input
+                accept=".pdf,.doc,.docx"
+                type="file"
+                name="ResumeFile"
+                onChange={uploadCV}
+              />
+            </Box>
+          )}
           <Button variant="contained" type="submit" id="addOfferButton">
             Aktualizuj profil
           </Button>

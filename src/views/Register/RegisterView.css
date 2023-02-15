@@ -11,9 +11,11 @@
   display: flex;
   flex-direction: column;
   padding: 15px;
+  align-self: center;
+  margin-top: 20px;
   width: 80%;
   height: 80%;
-  max-height: 600px;
+  max-height: 750px;
   overflow: auto;
   justify-content: center;
 }

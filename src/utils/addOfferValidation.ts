@@ -19,7 +19,7 @@ export const addOfferValidation = (values: AddOfferData) => {
 
   [values.title, values.role, values.country, values.region,
     values.city].forEach((el) => {
-    if (el && !/^[a-zA-Z ]+$/i.test(el)) {
+    if (el && !/^[\s\p{L}]+$/iu.test(el)) {
       const key = Object.values(values).findIndex(value => value === el);
       errors[Object.keys(errors)[key] as keyof AddOfferData] = strings.registerValidation.data;
     }

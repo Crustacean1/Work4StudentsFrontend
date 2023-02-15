@@ -22,14 +22,14 @@ export const registerValidation = (values: RegisterData) => {
   };
 
   [values.firstName, values.secondName, values.surname].forEach((el) => {
-    if (el && !/^[a-zA-Z]+$/i.test(el)) {
+    if (el && !/^[\p{L}]+$/iu.test(el)) {
       const key = Object.values(values).findIndex(value => value === el);
       errors[Object.keys(errors)[key] as keyof RegisterData] = strings.registerValidation.data;
     }
   });
 
   [values.country, values.region, values.city].forEach((el) => {
-    if (el && !/^[a-zA-Z ]+$/i.test(el)) {
+    if (el && !/^[\s\p{L}]+$/iu.test(el)) {
       const key = Object.values(values).findIndex(value => value === el);
       errors[Object.keys(errors)[key] as keyof RegisterData] = strings.registerValidation.data;
     }
@@ -58,7 +58,7 @@ export const registerValidation = (values: RegisterData) => {
     errors.companyName = strings.registerValidation.company;
   }
 
-  if (values.positionName && !/^[a-zA-Z ]+$/i.test(values.positionName)) {
+  if (values.positionName && !/^[\s\p{L}]+$/iu.test(values.positionName)) {
     errors.positionName = strings.registerValidation.data;
   }
 
@@ -82,7 +82,6 @@ export const registerValidation = (values: RegisterData) => {
 
   // Country autocomplete has issues with formik, workaround added
   errors.building = '';
-  console.log(errors);
 
   return errors;
 }
