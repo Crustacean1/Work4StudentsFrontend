@@ -2,16 +2,10 @@ import axios from 'axios';
 import { API } from '../const/API.const';
 import { useStore } from '../stores/store';
 
-export const applyForOffer = async ({ id , message }: {
-  id: string;
-  message: string;
-}) => {
+export const withdrawFromOffer = async (id: string) => {
   try {
     const store = useStore.getState();
-    const { data } = await axios.post(`${API}/applications/apply/${id}`,
-    {
-      Message: message,
-    },
+    const { data } = await axios.post(`${API}/applications/${id}/withdraw`, {},
     {
       headers: {
         'Content-Type': 'application/json',

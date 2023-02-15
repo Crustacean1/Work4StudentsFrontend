@@ -5,7 +5,7 @@
   width: 80%;
   height: 80%;
   margin-top: 50px;
-  max-height: 600px;
+  max-height: 650px;
   overflow: auto;
 }
 
@@ -20,4 +20,25 @@
 #profilePic {
   width: 200px;
   height: 200px;
+}
+
+#applicationsCard {
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+  padding: 0 10px 0 10px;
+  cursor: pointer;
+}
+
+#reviewsCard {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  background-color: white;
+  border-radius: 10px;
+  padding: 0 10px 0 10px;
 }

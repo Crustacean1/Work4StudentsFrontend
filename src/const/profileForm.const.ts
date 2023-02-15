@@ -4,37 +4,44 @@ export const radioDefault = 'student';
 export const profileFormData = {
   column: [
     {
-      name: 'firstName',
-      label: 'Imię'
+      name: 'Description',
+      label: 'Opis'
     },
     {
-      name: 'secondName',
-      label: 'Drugie imię',
-      optional: true,
+      name: 'Education',
+      label: 'Wykształcenie'
     },
     {
-      name: 'surname',
-      label: 'Nazwisko'
-    },
-    {
-      name: 'phoneNumber',
+      name: 'PhoneNumber',
       label: 'Numer telefonu'
     },
     {
-      name: 'emailAddress',
+      name: 'EmailAddress',
       label: 'Adres e-mail'
     },
     {
-      name: 'companyName',
-      label: 'Nazwa firmy',
+      name: 'Experience',
+      label: 'Doświadczenie',
     },
     {
-      name: 'positionName',
-      label: 'Stanowisko',
+      name: 'Country',
+      label: 'Państwo',
     },
     {
-      name: 'nip',
-      label: 'NIP',
+      name: 'Region',
+      label: 'Region',
+    },
+    {
+      name: 'City',
+      label: 'Miasto',
+    },
+    {
+      name: 'Street',
+      label: 'Ulica',
+    },
+    {
+      name: 'Building',
+      label: 'Budynek',
     },
   ]
 };

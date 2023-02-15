@@ -1,25 +1,29 @@
 import { useEffect, useState } from 'react';
-import { Avatar, Backdrop, Box, Card, Rating, Typography } from '@mui/material';
+import { Avatar, Backdrop, Box, Card, Pagination, Rating, Typography } from '@mui/material';
 import strings from '../../const/strings';
-import { useStore } from '../../stores/store';
-import { data } from '../../const/register.const';
+import { UserType, useStore } from '../../stores/store';
+import { data as profileForm } from '../../const/register.const';
 import { ProfileData } from '../../const/types.const';
 import { getProfile } from '../../functions/getProfile';
 import { imgDefault } from '../../const/profileForm.const';
 import './ProfileView.css';
-
-const tempData = {
-  firstName: 'Jan',
-  secondName: 'Albert',
-  surname: 'Kowalski',
-  phoneNumber: '123 456 789',
-  emailAddress: 'abc@polsl.pl'
-};
+import { useQuery } from 'react-query';
+import { getApplications } from '../../functions/getApplications';
+import { getRecruiterOffers } from '../../functions/getRecruiterOffers';
+import { useNavigate } from 'react-router-dom';
+import { getReviews } from '../../functions/getReviews';
+import StarIcon from '@mui/icons-material/Star';
+import { getImage } from '../../functions/getImage';
 
 const Profile = () => {
+  const [applicationsPage, setApplicationsPage] = useState<number>(1);
+  const [offersPage, setOffersPage] = useState<number>(1);
+  const [reviewsPage, setReviewsPage] = useState<number>(1);
   const [profileData, setProfileData] = useState<ProfileData>();
+  const [profilePic, setProfilePic] = useState<string>('');
 
   const store = useStore();
+  const navigate = useNavigate();
 
   const profileElement = (item: { name: string[]; label: string; delimiter?: any[]; }) => {
     let value = '';
@@ -38,21 +42,44 @@ const Profile = () => {
     );
   };
 
-  const test = async () => {
-    const data = await getProfile();
-    console.log(data);
-    setProfileData(data);
+  const { data: applicationsData } =  store.userType === UserType.Student ? useQuery({
+    queryKey: ['applications', applicationsPage],
+    queryFn: () => getApplications({ page: applicationsPage }),
+    keepPreviousData : true
+  }) : { data: [] };
+
+  const { data: offerData } = store.userType === UserType.Company ? useQuery({
+    queryKey: ['offers', offersPage],
+    queryFn: () => getRecruiterOffers({ page: offersPage }),
+    keepPreviousData : true
+  }) : { data: [] };
+
+  const { data: reviewsData } = useQuery({
+    queryKey: ['reviews', reviewsPage],
+    queryFn: () => getReviews({ page: reviewsPage }),
+    keepPreviousData : true
+  });
+
+  const getProfileData = async () => {
+    const newData = await getProfile();
+    setProfileData(newData);
+  };
+
+  const getProfilePic = async () => {
+    const newPic = await getImage();
+    setProfilePic(newPic[0]);
   };
 
   useEffect(() => {
-    test();
+    getProfileData();
+    getProfilePic();
   }, []);
 
   return (
     <Backdrop open className="registerBackground">
       <Card id="profileCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
         <Box id="profileHeader">
-          <Avatar id="profilePic" alt="Profile Picture" src={profileData?.photo ?? imgDefault} />
+          <Avatar id="profilePic" alt="Profile Picture" src={profilePic ?? imgDefault} />
           <Box>
             <Rating 
               name="read-only"
@@ -68,7 +95,72 @@ const Profile = () => {
             )}
           </Box>
         </Box>
-        {data.profile.info.map((item) => profileElement(item))}
+        {profileForm.profile.info.map((item) => profileElement(item))}
+        {store.userType === UserType.Student && applicationsData?.items &&
+          applicationsData.items.length > 0 && (
+            <div>
+              <Typography variant="h6" gutterBottom>Aplikacje:</Typography>
+              {applicationsData.items.map((item: any) => (
+                 <Card key={item.id} id="applicationsCard" sx={{ boxShadow: 10 }} onClick={() => navigate(`/work-offer/${item.offerId}`)}>
+                  <Typography>{item.offer.company} - {item.offer.title} ({Math.round(item.distance)} km)</Typography>
+                 </Card>
+              ))}
+              <Box sx={{ display: 'flex', margin: '20px' }}>
+              <Pagination 
+                count={applicationsData?.metaData?.pageCount ?? 1}
+                page={applicationsPage}
+                color="primary"
+                sx={{ margin: 'auto' }} 
+                onChange={(_, page) => setApplicationsPage(page)}
+              />
+              </Box>
+            </div>
+          )
+        }
+
+        {store.userType === UserType.Company &&
+          offerData?.items && offerData.items.length > 0 && (
+            <div>
+              <Typography variant="h6" gutterBottom>Oferty:</Typography>
+              {offerData.items.map((item: any) => (
+                <Typography key={item.id}>{item.offerId}</Typography>
+              ))}
+              <Box sx={{ display: 'flex', margin: '20px' }}>
+                <Pagination 
+                  count={offerData?.metaData?.pageCount ?? 1}
+                  page={offersPage}
+                  color="primary"
+                  sx={{ margin: 'auto' }} 
+                  onChange={(_, page) => setOffersPage(page)}
+                />
+              </Box>
+            </div>
+          )
+        }
+
+        <Typography variant="h6" gutterBottom>Recenzje:</Typography>
+        {reviewsData?.items && reviewsData.items.length > 0 ? (
+            <div>
+              {reviewsData.items.map((item: any) => (
+                <Card key={item.id} id="reviewsCard" sx={{ boxShadow: 10 }}>
+                  <Typography key={item.id}>
+                    {item.title} ({item.rating} <StarIcon fontSize="inherit" sx={{ verticalAlign: 'text-top' }}/>)
+                  </Typography>
+                  <Typography>{item.message}</Typography>
+                </Card>
+              ))}
+              <Box sx={{ display: 'flex', margin: '20px' }}>
+                <Pagination 
+                  count={reviewsData?.metaData?.pageCount ?? 1}
+                  page={reviewsPage}
+                  color="primary"
+                  sx={{ margin: 'auto' }} 
+                  onChange={(_, page) => setReviewsPage(page)}
+                />
+              </Box>
+            </div>
+          ) : <Typography gutterBottom align='center'>Brak danych</Typography>          
+        }
       </Card>
     </Backdrop>
   )

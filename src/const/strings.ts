@@ -48,5 +48,6 @@ export default {
     position: 'Nazwa stanowiska:',
     rate: 'Stawka:',
     sendApplication: 'Aplikuj',
+    withdrawApplication: 'Wycofaj aplikację',
   },
 };

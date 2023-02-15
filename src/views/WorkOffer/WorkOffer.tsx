@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { Avatar, Backdrop, Box, Button, Card, Typography } from '@mui/material';
+import { Avatar, Backdrop, Box, Button, Card, TextField, Typography } from '@mui/material';
 import { toDateTime } from '../../utils/timeConverter';
 import './WorkOffer.css';
 import strings from '../../const/strings';
@@ -8,10 +8,14 @@ import { getOffer } from '../../functions/getOffer';
 import { WorkOfferData } from '../../const/types.const';
 import { emptyOffer } from '../../const/offers.const';
 import { applyForOffer } from '../../functions/applyForOffer';
+import { UserType, useStore } from '../../stores/store';
+import { withdrawFromOffer } from '../../functions/withdrawFromOffer';
+import { imgDefault } from '../../const/profileForm.const';
 
 const WorkOffer = () => {
   const [offer, setOffer] = useState<WorkOfferData>(emptyOffer);
   
+  const store = useStore();
   let { offerId } = useParams();
 
   const getOfferData = useCallback(async () => {
@@ -23,18 +27,31 @@ const WorkOffer = () => {
     getOfferData();
   }, []);
 
-  const apply = async () => {
-    await applyForOffer(offer.id);
+  const apply = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const applyData = {
+      id: offer.id,
+      message: data.get('message')?.toString() || '',
+    };
+    await applyForOffer(applyData);
   };
 
-  const startingHour = new Date(offer.workingHours[0]?.start).toLocaleTimeString('en-US', {
+  const withdraw = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    await withdrawFromOffer(offer.id);
+  };
+
+  const startingHour = offer.workingHours ? new Date(offer.workingHours[0]?.start).toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-  });
-  const endingHour = new Date(offer.workingHours[0]?.end).toLocaleTimeString('en-US', {
+  }) : '';
+  const endingHour = offer.workingHours ? new Date(offer.workingHours[0]?.end).toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-  });
+  }) : '';
+
+  const isCompany = store.userType === UserType.Company;
 
   return (
     <Backdrop open className="registerBackground">
@@ -49,14 +66,14 @@ const WorkOffer = () => {
                 {offer.company?.name}
               </Typography> 
               <Typography id="companyDesc" color="text.secondary">
-                {offer.address.city}, {offer.address.region}, {offer.address.country}
+                {offer.address?.city}, {offer.address?.region}, {offer.address?.country}
               </Typography> 
             </Box>
             <Avatar
-              sx={{ marginLeft: '10px', maxWidth: '40%' }}
               id="companyLogo"
+              src={imgDefault}
               alt="The company's logo."
-              src='https://spng.subpng.com/20180422/awe/kisspng-java-servlet-computer-icons-programming-language-java-5adce132b13b21.743013201524425010726.jpg'
+              sx={{ marginLeft: '10px', maxWidth: '40%' }}
             />
           </Box>
         </Box>
@@ -65,7 +82,7 @@ const WorkOffer = () => {
             {strings.workOffer.position} {offer.role}
           </Typography>
           <Typography gutterBottom>
-            {`${strings.workOffer.rate} ${offer.payRange.min} - ${offer.payRange.max} zł/h`}
+            {`${strings.workOffer.rate} ${offer.payRange?.min} - ${offer.payRange?.max} zł/h`}
           </Typography>
           <Typography gutterBottom>
             Godziny pracy:
@@ -78,11 +95,38 @@ const WorkOffer = () => {
             {offer.description}
           </Typography>
         </Box>
-        <Box sx={{ height: '10%' }} textAlign='center' id="offerButton">
-          <Button variant="contained" sx={{ borderRadius: 10 }} onClick={apply}>
-            {strings.workOffer.sendApplication}
-          </Button>
-        </Box>
+        {offer.applied ? (
+          <Box component="form" sx={{ display: 'flex', flexDirection: 'column' }} onSubmit={withdraw}>
+            <Button 
+              type="submit"
+              variant="contained"
+              disabled={isCompany}
+              sx={{ width: '30%', alignSelf: 'center', borderRadius: 10 }}
+            >
+              {strings.workOffer.withdrawApplication}
+            </Button>
+          </Box>
+        ) : (
+          <Box component="form" sx={{ display: 'flex', flexDirection: 'column' }} onSubmit={apply}>
+            <TextField
+              rows={5}
+              multiline
+              name="message"
+              disabled={isCompany}
+              className='regFormField'
+              label='Wiadomość dla rekrutera'
+              sx={{ width: '90%', alignSelf: 'center' }}
+            />
+            <Button 
+              type="submit"
+              variant="contained"
+              disabled={isCompany}
+              sx={{ width: '20%', alignSelf: 'center', borderRadius: 10 }}
+            >
+              {strings.workOffer.sendApplication}
+            </Button>
+          </Box>
+        )}
         <Box sx={{ height: '5%' }} className="flexRow" id="footnote">
           <div />
           <Typography color="text.secondary">

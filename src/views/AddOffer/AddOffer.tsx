@@ -20,12 +20,12 @@ const AddOffer = () => {
 
   const sendOffer = async (data: any[]) => {
     console.log(data);
-    const registerData = Array.from(data)
+    const offerData = Array.from(data)
       .map(el => {
         return `"${el[0]}": "${el[1]}"`;
       });
     
-    const offerSent = await createOffer(JSON.parse('{' + registerData + '}'));
+    const offerSent = await createOffer(JSON.parse('{' + offerData + '}'));
   };
 
   const validate = (values: AddOfferData) => {

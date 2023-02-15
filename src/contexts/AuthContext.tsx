@@ -54,9 +54,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             'accept': '*/*'
           }
         });
-      store.setToken(data.jwtTokenValue);
       store.setUserId(data.userId);
       store.setUserType(data.userType);
+      store.setToken(data.jwtTokenValue);
+      store.setUserProfileId(data.userProfileId);
       return true;
     } catch (err: any) {
       console.log(err.response);

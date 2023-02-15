@@ -59,6 +59,7 @@ export interface WorkOfferCardData {
 }
 
 export interface WorkOfferData extends WorkOfferCardData {
+  applied: boolean;
   role: string;
   company: {
     name: string;
@@ -78,4 +79,23 @@ export interface AddOfferData {
   role: string;
   beginHour: string;
   endHour: string;
+}
+
+export interface EditProfileData {
+  Description: string;
+  Education: string;
+  PhoneNumber: string;
+  EmailAddress: string;
+  Experience: string;
+  Country: string;
+  Region: string;
+  City: string;
+  Street: string;
+  Building: string;
+  Availability: string | null;
+  ResumeFile: string;
+}
+
+export interface EditProfilePayload extends EditProfileData {
+  Image: string;
 }
