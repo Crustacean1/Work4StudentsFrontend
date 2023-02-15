@@ -16,7 +16,7 @@ const WorkOffer = () => {
 
   const getOfferData = useCallback(async () => {
     const data = await getOffer(offerId || '');
-    if (data.items) setOffer(data.items[0]);
+    if (data) setOffer(data);
   }, []);
 
   useEffect(() => {
@@ -46,10 +46,10 @@ const WorkOffer = () => {
           <Box className="flexRow">
             <Box>
               <Typography id="offerCompanyTitle">
-                Oferta
+                {offer.company?.name}
               </Typography> 
               <Typography id="companyDesc" color="text.secondary">
-                {offer.address.city}, {offer.address.country}
+                {offer.address.city}, {offer.address.region}, {offer.address.country}
               </Typography> 
             </Box>
             <Avatar

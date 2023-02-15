@@ -4,14 +4,14 @@ import { useStore } from '../stores/store';
 
 interface GetOffersPayload {
   page: number;
-  Keywords: string;
-  Categories: string;
+  keywords: string;
+  categories: string;
   size?: number;
 }
 
 export const DEFAULT_PAGE_SIZE = 10;
 
-export const getOffers = async ({ page, Keywords, Categories, size }: GetOffersPayload) => {
+export const getOffers = async ({ page, keywords, categories, size }: GetOffersPayload) => {
   try {
     const store = useStore.getState();
     const { data } = await axios
@@ -24,8 +24,8 @@ export const getOffers = async ({ page, Keywords, Categories, size }: GetOffersP
       },
       params: {
         page,
-        Keywords,
-        Categories,
+        keywords,
+        categories,
         pageSize: size || DEFAULT_PAGE_SIZE
       }
     });

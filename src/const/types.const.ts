@@ -60,6 +60,10 @@ export interface WorkOfferCardData {
 
 export interface WorkOfferData extends WorkOfferCardData {
   role: string;
+  company: {
+    name: string;
+    nip: string;
+  };
 }
 
 export interface AddOfferData {
