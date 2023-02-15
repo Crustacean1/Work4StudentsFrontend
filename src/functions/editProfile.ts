@@ -10,6 +10,7 @@ export const editProfile = async (payload: EditProfilePayload) => {
     let formData = new FormData();
 
     Object.keys(payload).forEach((key) => {
+      // @ts-ignore
       formData.append(key, payload[key]);
     });
   
