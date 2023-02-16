@@ -1,5 +1,5 @@
 import { Dayjs } from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Autocomplete, Backdrop, Box, Button, Card, Grid, TextField } from '@mui/material';
@@ -8,7 +8,7 @@ import strings from '../../const/strings';
 import { offerFormData } from '../../const/offers.const';
 import './AddOffer.css';
 import { useFormik } from 'formik';
-import { AddOfferData, WorkOfferData } from '../../const/types.const';
+import { AddOfferData } from '../../const/types.const';
 import { addOfferValidation } from '../../utils/addOfferValidation';
 import { countries } from '../../const/countries.const';
 import { createOffer } from '../../functions/createOffer';
@@ -25,7 +25,7 @@ const AddOffer = () => {
         return `"${el[0]}": "${el[1]}"`;
       });
     
-    const offerSent = await createOffer(JSON.parse('{' + offerData + '}'));
+    await createOffer(JSON.parse('{' + offerData + '}'));
   };
 
   const validate = (values: AddOfferData) => {

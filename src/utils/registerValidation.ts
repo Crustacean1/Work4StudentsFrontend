@@ -54,7 +54,7 @@ export const registerValidation = (values: RegisterData) => {
   }
 
   if (values.companyName &&
-    !/^[a-zA-Z0-9-@.{}#&!()]+(\s[a-zA-Z0-9-@{}.#&!()]+)+(\s[a-zA-Z-@.#&!()]+)?$/i.test(values.companyName)) {
+    !/^[\s\p{L}\d]+$/iu.test(values.companyName)) {
     errors.companyName = strings.registerValidation.company;
   }
 

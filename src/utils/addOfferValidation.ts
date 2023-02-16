@@ -37,6 +37,8 @@ export const addOfferValidation = (values: AddOfferData) => {
     errors.country = strings.registerValidation.data;
   }
 
+  if (values.payrangeMin && values.payrangeMax && values.payrangeMin > values.payrangeMax) 
+    errors.payrangeMin = errors.payrangeMax = strings.registerValidation.data;
   if (!values.beginHour) errors.beginHour = strings.registerValidation.data;
   if (!values.endHour) errors.endHour = strings.registerValidation.data;
 

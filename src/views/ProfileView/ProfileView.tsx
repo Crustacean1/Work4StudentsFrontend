@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { getReviews } from '../../functions/getReviews';
 import StarIcon from '@mui/icons-material/Star';
 import { getImage } from '../../functions/getImage';
+import { Document } from 'react-pdf';
 
 const Profile = () => {
   const [applicationsPage, setApplicationsPage] = useState<number>(1);
@@ -25,7 +26,7 @@ const Profile = () => {
   const store = useStore();
   const navigate = useNavigate();
 
-  const profileElement = (item: { name: string[]; label: string; delimiter?: any[]; }) => {
+  const profileElement = (item: { name: string[]; label: string; delimiter?: any[]; type?: UserType }) => {
     let value = '';
     item.name.map((el, index) => {
       const key = Object.keys(profileData ?? {}).findIndex(value => value === el);
@@ -35,11 +36,21 @@ const Profile = () => {
       ${(index !== item.name.length - 1) ? ' ' : ''}`
     });
 
-    return (
+    if(item.name.includes('resume')) return (
+      <div key={item.label}>
+        <Typography variant="h6" gutterBottom>
+          {item.label}:
+        </Typography>
+        {profileData?.resume ? <Document file={profileData?.resume} /> : <Typography gutterBottom>Nie dodano jeszcze CV</Typography>}
+      </div>
+    );
+
+    return item.type === undefined || item.type !== undefined 
+      && (store.userType === item.type || store.userType === UserType.Admin) ? (
       <Typography key={item.label} variant="h6" gutterBottom>
         {item.label}: {value}
       </Typography>
-    );
+    ) : null;
   };
 
   const { data: applicationsData } =  store.userType === UserType.Student ? useQuery({

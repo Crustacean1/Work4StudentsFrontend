@@ -16,7 +16,7 @@ export const withdrawFromOffer = async (id: string) => {
 
     return data;
   } catch (err: any) {
-    console.log(err.response);
+    alert(err.response);
     return [];
   }
 };

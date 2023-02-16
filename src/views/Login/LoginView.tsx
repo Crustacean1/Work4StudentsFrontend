@@ -54,7 +54,6 @@ const Login = () => {
           <Button variant="contained" type="submit" sx={{ borderRadius: 10 }}>
             Zaloguj się
           </Button>
-          <Link id="forgottenPassword" href="#">Nie pamiętasz hasła?</Link>
         </Box>
       </Card>
     </Backdrop>

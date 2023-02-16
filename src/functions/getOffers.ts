@@ -32,7 +32,7 @@ export const getOffers = async ({ page, keywords, categories, size }: GetOffersP
 
     return data;
   } catch (err: any) {
-    console.log(err.response);
+    alert(err.response);
     return [];
   }
 };

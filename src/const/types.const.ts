@@ -17,22 +17,26 @@ export interface RegisterData {
 }
 
 export interface ProfileData {
-  avaiability: null;
+  availability: null;
   building: string;
   city: string;
+  companyName?: string;
   country: string;
+  description: string;
   emailAddress: string;
+  employerId?: string;
   exceptionMessage: null;
   firstName: string;
   phoneNumber: string;
-  photo: null
+  photo: string | null;
+  positionName?: string;
   profileId: string;
   rating: number;
   region: string;
-  resume: null
+  resume?: string | null;
   secondName: string;
   street: string;
-  studentId: string;
+  studentId?: string;
   surname: string;
 }
 

@@ -17,7 +17,7 @@ export const getOffer = async (id: string) => {
     console.log(data);
     return data;
   } catch (err: any) {
-    console.log(err.response);
+    alert(err.response);
     return [];
   }
 };

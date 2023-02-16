@@ -19,13 +19,16 @@
     "formik": "2.2.9",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-pdf": "^6.2.2",
     "react-query": "^3.39.3",
     "react-router-dom": "6.4.3",
+    "ts-transformer-keys": "^0.4.4",
     "zustand": "4.3.2"
   },
   "devDependencies": {
     "@types/react": "18.0.24",
     "@types/react-dom": "18.0.8",
+    "@types/react-pdf": "^6.2.0",
     "@vitejs/plugin-react": "2.2.0",
     "typescript": "4.6.4",
     "vite": "3.2.3"

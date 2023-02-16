@@ -1,3 +1,5 @@
+import { UserType } from "../stores/store";
+
 export enum AccountTypes {
   Student,
   Company
@@ -22,6 +24,7 @@ type Test = {
       name: string[];
       label: string;
       delimiter?: string[];
+      type?: UserType;
     }[];
   };
 };
@@ -128,6 +131,25 @@ export const data: Test = {
         name: ['city', 'street', 'building'],
         label: 'Adres',
         delimiter: [',', '', '']
+      },
+      {
+        name: ['education'],
+        label: 'Wykształcenie',
+        type: UserType.Student
+      },
+      {
+        name: ['experience'],
+        label: 'Doświadczenie',
+        type: UserType.Student
+      },
+      {
+        name: ['description'],
+        label: 'Opis',
+      },
+      {
+        name: ['resume'],
+        label: 'Twoje CV',
+        type: UserType.Student
       }
     ],
   },

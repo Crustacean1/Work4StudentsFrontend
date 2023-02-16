@@ -5,7 +5,7 @@ import { useStore } from '../stores/store';
 export const getImage = async () => {
   try {
     const store = useStore.getState();
-    const { data } = await axios.get(`${API}/Profiles/get/photo/${store.userId}`, 
+    const { data } = await axios.get(`${API}/Profiles/get/photo/${store.userProfileId}`, 
     {
       headers: {
         'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export const getImage = async () => {
     console.log(data);
     return data;
   } catch (err: any) {
-    console.log(err.response);
+    alert(err.response);
     return [];
   }
 };

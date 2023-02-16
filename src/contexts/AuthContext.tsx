@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       return true;
     } catch (err: any) {
-      console.log(err.response);
+      alert(err.response);
     }
 
     return false;
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       store.setUserProfileId(data.userProfileId);
       return true;
     } catch (err: any) {
-      console.log(err.response);
+      alert(err.response);
     }
 
     return false;

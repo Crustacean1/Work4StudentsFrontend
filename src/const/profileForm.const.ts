@@ -1,3 +1,5 @@
+import { UserType } from "../stores/store";
+
 export const imgDefault = 'https://spng.subpng.com/20180422/awe/kisspng-java-servlet-computer-icons-programming-language-java-5adce132b13b21.743013201524425010726.jpg';
 export const radioDefault = 'student';
 
@@ -5,11 +7,14 @@ export const profileFormData = {
   column: [
     {
       name: 'Description',
-      label: 'Opis'
+      label: 'Opis',
+      optional: true
     },
     {
       name: 'Education',
-      label: 'Wykształcenie'
+      label: 'Wykształcenie',
+      type: UserType.Student,
+      optional: true
     },
     {
       name: 'PhoneNumber',
@@ -22,6 +27,13 @@ export const profileFormData = {
     {
       name: 'Experience',
       label: 'Doświadczenie',
+      type: UserType.Student,
+      optional: true
+    },
+    {
+      name: 'positionName',
+      label: 'Stanowisko',
+      type: UserType.Company
     },
     {
       name: 'Country',

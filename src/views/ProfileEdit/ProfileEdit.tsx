@@ -1,21 +1,27 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Autocomplete, Avatar, Backdrop, Box, Button, Card, Grid, TextField, Typography } from '@mui/material';
 import strings from '../../const/strings';
 import { imgDefault, profileFormData } from '../../const/profileForm.const';
 import './ProfileEdit.css';
 import { useFormik } from 'formik';
-import { countries } from '../../const/countries.const';
-import { EditProfileData, EditProfilePayload } from '../../const/types.const';
+import { countries, CountryType } from '../../const/countries.const';
+import { EditProfilePayload, ProfileData } from '../../const/types.const';
 import { editProfileValidation } from '../../utils/editProfileValidation';
 import { editProfile } from '../../functions/editProfile';
 import { getBase64 } from '../../utils/base64';
 import { UserType, useStore } from '../../stores/store';
+import { useNavigate } from 'react-router-dom';
+import { getProfile } from '../../functions/getProfile';
 
 const ProfileEdit = () => {
-  const [avatarSrc, setAvatarSrc] = useState<string>(imgDefault);
   const [errorList, setErrorList] = useState<any>({});
+  const [avatarSrc, setAvatarSrc] = useState<string>(imgDefault);
+  const [profileData, setProfileData] = useState<ProfileData>();
+  const [countryValue, setCountryValue] = useState<CountryType | null>(countries[0]);
+  const [countryInput, setCountryInput] = useState<string>('');
 
   const store = useStore();
+  const navigate = useNavigate();
 
   const previewImg = (event: any) => {
     if (event.target.files && event.target.files[0]) {
@@ -37,14 +43,47 @@ const ProfileEdit = () => {
     const JSONdata = JSON.parse('{' + profileData + '}');
     const dataArray = Array.from(data);
 
-    getBase64(dataArray.find(el => el[0] === "ResumeFile")[1], (res: any) => {
+    getBase64(dataArray.find(el => el[0] === "ResumeFile")[1] || new File([""], "filename"), (res: any) => {
       JSONdata.ResumeFile = res;
-      getBase64(dataArray.find(el => el[0] === "Image")[1], async (res: any) => {
+      getBase64(dataArray.find(el => el[0] === "Image")[1] || new File([""], "filename"), async (res: any) => {
         JSONdata.Image = res;
         await editProfile(JSONdata);
+        navigate('/profile');
       });
     });
   };
+
+  const getProfileData = async () => {
+    const newData = await getProfile();
+
+    profileFormik.initialValues = {
+      Description: newData?.description || '',
+      Education: '',
+      PhoneNumber: newData?.phoneNumber || '',
+      EmailAddress: newData?.emailAddress || '',
+      Experience: '',
+      Country: newData?.country || '',
+      Region: newData?.region || '',
+      City: newData?.city || '',
+      Street: newData?.street || '',
+      Building: newData?.building || '',
+      Availability: newData?.availability || null,
+      ResumeFile: newData?.resume || '',
+      Image: newData?.photo || ''
+    };
+
+    const country = countries.filter((country) => country.label === newData?.country)[0];
+
+    if (country) {
+      setCountryValue(country);
+      setCountryInput(country?.label);
+    }
+    setProfileData(newData);
+  };
+
+  useEffect(() => {
+    getProfileData();
+  }, []);
 
   const validate = (values: EditProfilePayload) => {
     let errors = editProfileValidation(values);
@@ -55,24 +94,25 @@ const ProfileEdit = () => {
 
   const profileFormik = useFormik({
     initialValues: {
-      Description: '',
+      Description: profileData?.description || '',
       Education: '',
-      PhoneNumber: '',
-      EmailAddress: '',
+      PhoneNumber: profileData?.phoneNumber || '',
+      EmailAddress: profileData?.emailAddress || '',
       Experience: '',
-      Country: '',
-      Region: '',
-      City: '',
-      Street: '',
-      Building: '',
-      Availability: null,
-      ResumeFile: '',
-      Image: ''
+      Country: profileData?.country || '',
+      Region: profileData?.region || '',
+      City: profileData?.city || '',
+      Street: profileData?.street || '',
+      Building: profileData?.building || '',
+      Availability: profileData?.availability || null,
+      ResumeFile: profileData?.resume || '',
+      Image: profileData?.photo || ''
     },
     validate,
     onSubmit: (values) => {
       callForEdit(Object.entries(values));
     },
+    enableReinitialize: true,
   });
 
   const dropdownElement = (el: any) => {
@@ -80,9 +120,17 @@ const ProfileEdit = () => {
       <Autocomplete
         id="country"
         key={el.name}
-        onChange={(_, value) => profileFormik.setFieldValue('Country', value?.label)}
         sx={{ width: el.halfSize ? '44%' : '90%', margin: '10px' }}
         options={countries}
+        value={countryValue}
+        onChange={(_, value) => {
+          profileFormik.setFieldValue('Country', value?.label);
+          if (value) setCountryValue(value);
+        }}
+        inputValue={countryInput}
+        onInputChange={(_, newInputValue) => {
+          setCountryInput(newInputValue);
+        }}
         autoHighlight
         getOptionLabel={(option) => option.label}
         renderOption={(props, option) => (
@@ -117,20 +165,24 @@ const ProfileEdit = () => {
 
   const gridElement = (el: any) => {
     if (el.name.toLowerCase() === 'country') return dropdownElement(el);
-    return (
+    return el.type === undefined || el.type !== undefined && (store.userType === el.type || store.userType === UserType.Admin) 
+    ? (
       <TextField
-        required={!el.optional}
         rows={5}
+        key={el.name}
         name={el.name}
         label={el.label}
+        required={!el.optional}
         className='regFormField'
         multiline={el.multiline}
         error={!!errorList[el.name]}
         onChange={profileFormik.handleChange}
         sx={{ width: el.halfSize ? '44%' : '90%' }}
         type={el.name.toLowerCase().includes('password') ? 'password' : ''}
+        // @ts-ignore
+        value={profileFormik.values[el.name]}
       />
-    )
+    ) : null
   };
 
   return (

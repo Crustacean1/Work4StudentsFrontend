@@ -96,16 +96,28 @@ const WorkOffer = () => {
           </Typography>
         </Box>
         {offer.applied ? (
-          <Box component="form" sx={{ display: 'flex', flexDirection: 'column' }} onSubmit={withdraw}>
-            <Button 
-              type="submit"
-              variant="contained"
-              disabled={isCompany}
-              sx={{ width: '30%', alignSelf: 'center', borderRadius: 10 }}
-            >
-              {strings.workOffer.withdrawApplication}
-            </Button>
-          </Box>
+          <div>
+            <Box component="form" sx={{ display: 'flex', flexDirection: 'column' }} onSubmit={withdraw}>
+              <Button 
+                type="submit"
+                variant="contained"
+                disabled={isCompany}
+                sx={{ width: '30%', alignSelf: 'center', borderRadius: 10 }}
+              >
+                Oceń pracodawcę
+              </Button>
+            </Box>
+            <Box component="form" sx={{ display: 'flex', flexDirection: 'column' }} onSubmit={withdraw}>
+              <Button 
+                type="submit"
+                variant="contained"
+                disabled={isCompany}
+                sx={{ width: '30%', alignSelf: 'center', borderRadius: 10 }}
+              >
+                {strings.workOffer.withdrawApplication}
+              </Button>
+            </Box>
+          </div>
         ) : (
           <Box component="form" sx={{ display: 'flex', flexDirection: 'column' }} onSubmit={apply}>
             <TextField
@@ -130,7 +142,7 @@ const WorkOffer = () => {
         <Box sx={{ height: '5%' }} className="flexRow" id="footnote">
           <div />
           <Typography color="text.secondary">
-            {toDateTime(1000)}
+            {toDateTime(new Date(offer.creationDate).getTime() / 1000)}
           </Typography> 
         </Box>
       </Card>

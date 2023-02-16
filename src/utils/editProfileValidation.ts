@@ -1,6 +1,7 @@
 import { countries } from "../const/countries.const";
 import strings from "../const/strings";
 import { EditProfileData, EditProfilePayload } from "../const/types.const";
+import { UserType, useStore } from "../stores/store";
 
 export const editProfileValidation = (values: EditProfilePayload) => {
   let errors: EditProfileData = {
@@ -46,8 +47,6 @@ export const editProfileValidation = (values: EditProfilePayload) => {
     !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.EmailAddress)) {
     errors.EmailAddress = strings.registerValidation.email;
   }
-
-  if(!values.ResumeFile) errors.ResumeFile = strings.registerValidation.data;
 
   errors.Availability = '';
 
