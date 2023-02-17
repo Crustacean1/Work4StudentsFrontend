@@ -47,8 +47,9 @@ const ProfileEdit = () => {
       JSONdata.ResumeFile = res;
       getBase64(dataArray.find(el => el[0] === "Image")[1] || new File([""], "filename"), async (res: any) => {
         JSONdata.Image = res;
-        await editProfile(JSONdata);
-        navigate('/profile');
+        await editProfile(JSONdata).then(res => {
+          if (!Array.isArray(res)) navigate('/profile');
+        });
       });
     });
   };

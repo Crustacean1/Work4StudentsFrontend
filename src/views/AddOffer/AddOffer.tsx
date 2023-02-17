@@ -129,7 +129,9 @@ const AddOffer = () => {
                 value={bHour}
                 onChange={(newValue) => {
                   setBHour(newValue);
-                  offerFormik.setFieldValue('beginHour', newValue?.toISOString());
+                  try {
+                    offerFormik.setFieldValue('beginHour', newValue?.toISOString());
+                  } catch(err) {}
                 }}
                 renderInput={timeElement}
               />
@@ -138,7 +140,9 @@ const AddOffer = () => {
                 value={eHour}
                 onChange={(newValue) => {
                   setEHour(newValue);
-                  offerFormik.setFieldValue('endHour', newValue?.toISOString());
+                  try {
+                    offerFormik.setFieldValue('endHour', newValue?.toISOString());
+                  } catch(err) {}
                 }}
                 renderInput={timeElement}
               />
