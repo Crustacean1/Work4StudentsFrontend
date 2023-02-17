@@ -5,7 +5,7 @@ import { useStore } from '../stores/store';
 export const deleteAccount = async () => {
   try {
     const store = useStore.getState();
-    const { data } = await axios.get(`${API}/Accounts/delete/user/${store.userId}`, 
+    const { data } = await axios.delete(`${API}/Accounts/user/${store.userId}`, 
     {
       headers: {
         'Content-Type': 'application/json',

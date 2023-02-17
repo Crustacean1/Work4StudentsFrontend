@@ -12,6 +12,8 @@ import { getBase64 } from '../../utils/base64';
 import { UserType, useStore } from '../../stores/store';
 import { useNavigate } from 'react-router-dom';
 import { getProfile } from '../../functions/getProfile';
+import { DataURIToBlob } from '../../utils/DataURIToBlob';
+import { getImage } from '../../functions/getImage';
 
 const ProfileEdit = () => {
   const [errorList, setErrorList] = useState<any>({});
@@ -19,6 +21,7 @@ const ProfileEdit = () => {
   const [profileData, setProfileData] = useState<ProfileData>();
   const [countryValue, setCountryValue] = useState<CountryType | null>(countries[0]);
   const [countryInput, setCountryInput] = useState<string>('');
+  const [profilePic, setProfilePic] = useState<string>('');
 
   const store = useStore();
   const navigate = useNavigate();
@@ -36,22 +39,27 @@ const ProfileEdit = () => {
   };
 
   const callForEdit = async (data: any[]) => {
-    const profileData = Array.from(data)
+    const profileArray = Array.from(data)
       .map(el => {
         return `"${el[0]}": "${el[1]}"`;
       });
-    const JSONdata = JSON.parse('{' + profileData + '}');
+    const JSONdata = JSON.parse('{' + profileArray + '}');
     const dataArray = Array.from(data);
 
-    getBase64(dataArray.find(el => el[0] === "ResumeFile")[1] || new File([""], "filename"), (res: any) => {
-      JSONdata.ResumeFile = res;
-      getBase64(dataArray.find(el => el[0] === "Image")[1] || new File([""], "filename"), async (res: any) => {
-        JSONdata.Image = res;
-        await editProfile(JSONdata).then(res => {
-          if (!Array.isArray(res)) navigate('/profile');
+    // Additional data for BE reasons
+    JSONdata.FirstName = profileData?.firstName || '';
+    JSONdata.SecondName = profileData?.secondName || '';
+    JSONdata.Surname = profileData?.surname || '';
+
+    getBase64(dataArray.find(el => el[0] === "ResumeFile")[1], (res: any) => {
+      JSONdata.ResumeFile = res ? DataURIToBlob(res) : '';
+      getBase64(dataArray.find(el => el[0] === "Image")[1], async (res: any) => {
+        JSONdata.Image = res ? DataURIToBlob(res) : '';
+        await editProfile(JSONdata).then(response => {
+          if (!Array.isArray(response)) navigate('/profile');
         });
       });
-    });
+    });   
   };
 
   const getProfileData = async () => {
@@ -84,8 +92,14 @@ const ProfileEdit = () => {
     setProfileData(newData);
   };
 
+  const getProfilePic = async () => {
+    const newPic = await getImage();
+    setProfilePic(newPic.photo);
+  };
+
   useEffect(() => {
     getProfileData();
+    getProfilePic();
   }, []);
 
   const validate = (values: EditProfilePayload) => {
@@ -194,7 +208,7 @@ const ProfileEdit = () => {
       <Card id="editProfileCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
         <Grid container id="addOfferContainer" component="form" onSubmit={profileFormik.handleSubmit}>
           <Box id="editPicContainer">
-            <Avatar id="editPic" alt="Profile picture" src={imgDefault} srcSet={avatarSrc} />
+            <Avatar id="editPic" alt="Profile picture" src={profilePic ? `data:image/jpeg;base64,${profilePic}` : imgDefault} />
             <Button
               variant="contained"
               component="label"

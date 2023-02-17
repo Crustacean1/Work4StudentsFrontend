@@ -14,12 +14,12 @@ import { useNavigate } from 'react-router-dom';
 import { getReviews } from '../../functions/getReviews';
 import StarIcon from '@mui/icons-material/Star';
 import { getImage } from '../../functions/getImage';
-import { Document } from 'react-pdf';
+import { Document } from 'react-pdf/dist/esm/entry.vite';
 import { deleteAccount } from '../../functions/deleteAccount';
-import CloseIcon from '@mui/icons-material/Close';
 import LockIcon from '@mui/icons-material/Lock';
 import { closeOffer } from '../../functions/closeOffer';
 import { deleteOffer } from '../../functions/deleteOffer';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Profile = () => {
   const [applicationsPage, setApplicationsPage] = useState<number>(1);
@@ -28,6 +28,7 @@ const Profile = () => {
   const [profileData, setProfileData] = useState<ProfileData>();
   const [profilePic, setProfilePic] = useState<string>('');
 
+  const auth = useAuth();
   const store = useStore();
   const navigate = useNavigate();
 
@@ -47,7 +48,7 @@ const Profile = () => {
           <Typography variant="h6" gutterBottom>
             {item.label}:
           </Typography>
-          {profileData?.resume ? <Document file={profileData.resume} /> : <Typography gutterBottom>Nie dodano jeszcze CV</Typography>}
+          {profileData?.resume ? <Document onLoadError={console.error} file={`data:application/pdf;base64,${profileData.resume}`} /> : <Typography gutterBottom>Nie dodano jeszcze CV</Typography>}
         </div>
       );
 
@@ -63,7 +64,7 @@ const Profile = () => {
     const shouldDelete = confirm("Czy na pewno chcesz usunąć konto?");
     if (shouldDelete) {
       await deleteAccount();
-      navigate('/login');
+      auth.logout();
     }
   };
 
@@ -87,12 +88,13 @@ const Profile = () => {
 
   const getProfileData = async () => {
     const newData = await getProfile();
+    console.log('xd', newData);
     setProfileData(newData);
   };
 
   const getProfilePic = async () => {
     const newPic = await getImage();
-    setProfilePic(newPic[0]);
+    setProfilePic(newPic.photo);
   };
 
   const closeListedOffer = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
@@ -116,7 +118,7 @@ const Profile = () => {
     <Backdrop open className="registerBackground">
       <Card id="profileCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
         <Box id="profileHeader">
-          <Avatar id="profilePic" alt="Profile Picture" src={profilePic ?? imgDefault} />
+          <Avatar id="profilePic" alt="Profile Picture" src={profilePic ? `data:image/jpeg;base64,${profilePic}` : imgDefault} />
           <Box>
             <Rating 
               name="read-only"
