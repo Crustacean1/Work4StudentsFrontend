@@ -27,7 +27,8 @@ export const getRecruiterOffers = async ({ page, size }: GetRecruiterOffersPaylo
 
     return data;
   } catch (err: any) {
-    alert(err.response);
+    alert(JSON.stringify(err));
+    console.log(err.response);
     return [];
   }
 };

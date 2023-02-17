@@ -8,6 +8,7 @@ export const addOfferValidation = (values: AddOfferData) => {
     city: '',
     title: '',
     street: '',
+    building: '',
     region: '',
     country: '',
     description: '',

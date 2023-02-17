@@ -31,7 +31,7 @@ export const profileFormData = {
       optional: true
     },
     {
-      name: 'positionName',
+      name: 'PositionName',
       label: 'Stanowisko',
       type: UserType.Company
     },

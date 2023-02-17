@@ -10,7 +10,7 @@ export const applyForOffer = async ({ id , message }: {
     const store = useStore.getState();
     const { data } = await axios.post(`${API}/applications/apply/${id}`,
     {
-      Message: message,
+      message,
     },
     {
       headers: {
@@ -22,7 +22,8 @@ export const applyForOffer = async ({ id , message }: {
 
     return data;
   } catch (err: any) {
-    alert(err.response);
+    alert(JSON.stringify(err));
+    console.log(err.response);
     return [];
   }
 };

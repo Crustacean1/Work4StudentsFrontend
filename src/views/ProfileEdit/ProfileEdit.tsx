@@ -55,6 +55,7 @@ const ProfileEdit = () => {
 
   const getProfileData = async () => {
     const newData = await getProfile();
+    console.log(newData);
 
     profileFormik.initialValues = {
       Description: newData?.description || '',
@@ -62,6 +63,7 @@ const ProfileEdit = () => {
       PhoneNumber: newData?.phoneNumber || '',
       EmailAddress: newData?.emailAddress || '',
       Experience: '',
+      PositionName: newData?.positionName || '',
       Country: newData?.country || '',
       Region: newData?.region || '',
       City: newData?.city || '',
@@ -99,6 +101,7 @@ const ProfileEdit = () => {
       PhoneNumber: profileData?.phoneNumber || '',
       EmailAddress: profileData?.emailAddress || '',
       Experience: '',
+      PositionName: profileData?.positionName || '',
       Country: profileData?.country || '',
       Region: profileData?.region || '',
       City: profileData?.city || '',
@@ -209,7 +212,7 @@ const ProfileEdit = () => {
             <Box id="editCV">
               <Typography>{strings.profileForm.CV}</Typography>
               <input
-                accept=".pdf,.doc,.docx"
+                accept=".pdf"
                 type="file"
                 name="ResumeFile"
                 onChange={uploadCV}

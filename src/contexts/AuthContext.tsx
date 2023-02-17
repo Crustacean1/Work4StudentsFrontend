@@ -37,7 +37,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       return true;
     } catch (err: any) {
-      alert(err.response);
+      alert(JSON.stringify(err));
+      console.log(err.response);
     }
 
     return false;
@@ -54,13 +55,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             'accept': '*/*'
           }
         });
+
       store.setUserId(data.userId);
       store.setUserType(data.userType);
       store.setToken(data.jwtTokenValue);
       store.setUserProfileId(data.userProfileId);
+
       return true;
     } catch (err: any) {
-      alert(err.response);
+      alert(JSON.stringify(err));
+      console.log(err.response);
     }
 
     return false;

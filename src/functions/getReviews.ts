@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API } from '../const/API.const';
-import { useStore } from '../stores/store';
+import { UserType, useStore } from '../stores/store';
 
 interface GetReviewsPayload {
   page: number;
@@ -12,7 +12,10 @@ export const DEFAULT_REVIEWS_SIZE = 5;
 export const getReviews = async ({ page, size }: GetReviewsPayload) => {
   try {
     const store = useStore.getState();
-    const { data } = await axios.get(`${API}/student/${store.userId}/reviews`, 
+    const { data } = await axios.get(`${API}/${
+      store.userType === UserType.Student 
+        ? `student/${store.userId}` 
+        : `recruiter/${store.userId}`}/reviews`, 
     {
       headers: {
         'accept': '*/*',
@@ -27,7 +30,8 @@ export const getReviews = async ({ page, size }: GetReviewsPayload) => {
 
     return data;
   } catch (err: any) {
-    alert(err.response);
+    alert(JSON.stringify(err));
+    console.log(err.response);
     return [];
   }
 };

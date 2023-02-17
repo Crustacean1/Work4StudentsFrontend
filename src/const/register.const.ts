@@ -143,6 +143,11 @@ export const data: Test = {
         type: UserType.Student
       },
       {
+        name: ['positionName'],
+        label: 'Stanowisko',
+        type: UserType.Company
+      },
+      {
         name: ['description'],
         label: 'Opis',
       },

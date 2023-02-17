@@ -2,17 +2,18 @@ import axios from 'axios';
 import { API } from '../const/API.const';
 import { useStore } from '../stores/store';
 
-interface GetApplicationsPayload {
+interface GetOfferApplicationsPayload {
+  id: string;
   page: number;
   size?: number;
 }
 
 export const DEFAULT_APPLICATIONS_SIZE = 5;
 
-export const getApplications = async ({ page, size }: GetApplicationsPayload) => {
+export const getOfferApplications = async ({ id, page, size }: GetOfferApplicationsPayload) => {
   try {
     const store = useStore.getState();
-    const { data } = await axios.get(`${API}/student/applications`, 
+    const { data } = await axios.get(`${API}/offers/${id}/applications`, 
     {
       headers: {
         'accept': '*/*',

@@ -2,27 +2,28 @@ import axios from 'axios';
 import { API } from '../const/API.const';
 import { useStore } from '../stores/store';
 
-interface GetApplicationsPayload {
-  page: number;
-  size?: number;
+interface ReviewStudentPayload {
+  id: string;
+  title: string;
+  message: string;
+  rating: number;
 }
 
-export const DEFAULT_APPLICATIONS_SIZE = 5;
-
-export const getApplications = async ({ page, size }: GetApplicationsPayload) => {
+export const reviewStudent = async (payload: ReviewStudentPayload) => {
   try {
     const store = useStore.getState();
-    const { data } = await axios.get(`${API}/student/applications`, 
+    const { data } = await axios.post(`${API}/applications/${payload.id}/reviews`,
+    {
+      title: payload.title,
+      message: payload.message,
+      rating: payload.rating
+    },
     {
       headers: {
-        'accept': '*/*',
         'Content-Type': 'application/json',
+        'accept': '*/*',
         'Authorization': 'Bearer ' + store.token
       },
-      params: {
-        page,
-        pageSize: size || DEFAULT_APPLICATIONS_SIZE
-      }
     });
 
     return data;

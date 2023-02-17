@@ -41,6 +41,12 @@ export const offerFormData = {
       halfSize: true,
     },
     {
+      name: 'building',
+      label: 'Budynek',
+      halfSize: true,
+      optional: true
+    },
+    {
       name: 'description',
       label: 'Opis',
       multiline: true
@@ -50,6 +56,7 @@ export const offerFormData = {
 
 export const emptyOffer: WorkOfferData = {
   applied: false,
+  created: false,
   company: {
     name: '',
     nip: ''

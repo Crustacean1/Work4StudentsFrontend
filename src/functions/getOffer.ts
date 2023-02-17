@@ -14,10 +14,10 @@ export const getOffer = async (id: string) => {
       },
     });
 
-    console.log(data);
     return data;
   } catch (err: any) {
-    alert(err.response);
+    alert(JSON.stringify(err));
+    console.log(err.response);
     return [];
   }
 };

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { API } from '../const/API.const';
 import { AddOfferData } from '../const/types.const';
+import { useStore } from '../stores/store';
 
 interface AddOfferPayload extends AddOfferData {
   beginHour: string;
@@ -9,6 +10,7 @@ interface AddOfferPayload extends AddOfferData {
 
 export const createOffer = async (payload: AddOfferPayload) => {
   try {
+    const store = useStore.getState();
     const { data } = await axios.post(`${API}/offers`,
     {
       title: payload.title,
@@ -18,7 +20,8 @@ export const createOffer = async (payload: AddOfferPayload) => {
         country: payload.country,
         region: payload.region,
         city: payload.city,
-        street: payload.street
+        street: payload.street,
+        building: payload.building
       },
       payRange: {
         min: payload.payrangeMin,
@@ -34,13 +37,15 @@ export const createOffer = async (payload: AddOfferPayload) => {
     {
       headers: {
         'Content-Type': 'application/json',
-        'accept': '*/*'
+        'accept': '*/*',
+        'Authorization': 'Bearer ' + store.token
       },
     });
 
     return data;
   } catch (err: any) {
-    alert(err.response);
+    alert(JSON.stringify(err));
+    console.log(err.response);
     return [];
   }
 };

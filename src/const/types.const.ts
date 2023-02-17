@@ -63,7 +63,9 @@ export interface WorkOfferCardData {
 }
 
 export interface WorkOfferData extends WorkOfferCardData {
+  created: boolean;
   applied: boolean;
+  applicationId?: string;
   role: string;
   company: {
     name: string;
@@ -76,6 +78,7 @@ export interface AddOfferData {
   region: string;
   city: string;
   street: string;
+  building: string;
   title: string;
   description: string;
   payrangeMin: string;

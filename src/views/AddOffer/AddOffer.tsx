@@ -19,7 +19,6 @@ const AddOffer = () => {
   const [errorList, setErrorList] = useState<any>({});
 
   const sendOffer = async (data: any[]) => {
-    console.log(data);
     const offerData = Array.from(data)
       .map(el => {
         return `"${el[0]}": "${el[1]}"`;
@@ -31,8 +30,6 @@ const AddOffer = () => {
   const validate = (values: AddOfferData) => {
     let errors = addOfferValidation(values);
 
-    console.log(errors);
-
     setErrorList(errors);
     return Object.values(errors).filter((error: any) => error).length ? errors : {};
   }
@@ -43,6 +40,7 @@ const AddOffer = () => {
       city: '',
       title: '',
       street: '',
+      building: '',
       region: '',
       country: '',
       description: '',
@@ -102,11 +100,11 @@ const AddOffer = () => {
     if (el.name === 'country') return dropdownElement(el);
     return (
       <TextField
-        required
         rows={5}
         key={el.name}
         name={el.name}
         label={el.label}
+        required={!el.optional}
         className='regFormField'
         multiline={el.multiline}
         error={!!errorList[el.name]}

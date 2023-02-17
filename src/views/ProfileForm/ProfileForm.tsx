@@ -86,7 +86,7 @@ const ProfileForm = () => {
             <Box>
               <Typography>{strings.profileForm.CV}</Typography>
               <input
-                accept=".pdf,.doc,.docx"
+                accept=".pdf"
                 type="file"
                 onChange={uploadCV}
               />

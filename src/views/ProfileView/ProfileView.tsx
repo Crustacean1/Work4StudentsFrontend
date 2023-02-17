@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Avatar, Backdrop, Box, Card, Pagination, Rating, Typography } from '@mui/material';
+import { Avatar, Backdrop, Box, Button, Card, CardContent, IconButton, Pagination, Rating, Typography } from '@mui/material';
 import strings from '../../const/strings';
 import { UserType, useStore } from '../../stores/store';
 import { data as profileForm } from '../../const/register.const';
@@ -15,6 +15,11 @@ import { getReviews } from '../../functions/getReviews';
 import StarIcon from '@mui/icons-material/Star';
 import { getImage } from '../../functions/getImage';
 import { Document } from 'react-pdf';
+import { deleteAccount } from '../../functions/deleteAccount';
+import CloseIcon from '@mui/icons-material/Close';
+import LockIcon from '@mui/icons-material/Lock';
+import { closeOffer } from '../../functions/closeOffer';
+import { deleteOffer } from '../../functions/deleteOffer';
 
 const Profile = () => {
   const [applicationsPage, setApplicationsPage] = useState<number>(1);
@@ -36,14 +41,15 @@ const Profile = () => {
       ${(index !== item.name.length - 1) ? ' ' : ''}`
     });
 
-    if(item.name.includes('resume')) return (
-      <div key={item.label}>
-        <Typography variant="h6" gutterBottom>
-          {item.label}:
-        </Typography>
-        {profileData?.resume ? <Document file={profileData?.resume} /> : <Typography gutterBottom>Nie dodano jeszcze CV</Typography>}
-      </div>
-    );
+    if(item.name.includes('resume') && (store.userType === item.type || store.userType === UserType.Admin)) 
+      return (
+        <div key={item.label}>
+          <Typography variant="h6" gutterBottom>
+            {item.label}:
+          </Typography>
+          {profileData?.resume ? <Document file={profileData.resume} /> : <Typography gutterBottom>Nie dodano jeszcze CV</Typography>}
+        </div>
+      );
 
     return item.type === undefined || item.type !== undefined 
       && (store.userType === item.type || store.userType === UserType.Admin) ? (
@@ -53,7 +59,15 @@ const Profile = () => {
     ) : null;
   };
 
-  const { data: applicationsData } =  store.userType === UserType.Student ? useQuery({
+  const removeAccount = async () => {
+    const shouldDelete = confirm("Czy na pewno chcesz usunąć konto?");
+    if (shouldDelete) {
+      await deleteAccount();
+      navigate('/login');
+    }
+  };
+
+  const { data: applicationsData } = store.userType === UserType.Student ? useQuery({
     queryKey: ['applications', applicationsPage],
     queryFn: () => getApplications({ page: applicationsPage }),
     keepPreviousData : true
@@ -79,6 +93,18 @@ const Profile = () => {
   const getProfilePic = async () => {
     const newPic = await getImage();
     setProfilePic(newPic[0]);
+  };
+
+  const closeListedOffer = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
+    e.stopPropagation();
+    await closeOffer(id);
+    getProfileData();
+  };
+
+  const deleteListedOffer = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
+    e.stopPropagation();
+    await deleteOffer(id);
+    getProfileData();
   };
 
   useEffect(() => {
@@ -134,7 +160,14 @@ const Profile = () => {
             <div>
               <Typography variant="h6" gutterBottom>Oferty:</Typography>
               {offerData.items.map((item: any) => (
-                <Typography key={item.id}>{item.offerId}</Typography>
+                <Card id="offersCard" key={item.id} sx={{ boxShadow: 10 }} onClick={() => navigate(`/work-offer/${item.id}`)}>
+                  <Typography id="offerText" height={40} noWrap>{item.title} - {item.role} ({item.status})</Typography>
+                  {item.status !== 'Finished' && (
+                    <IconButton onClick={(e) => closeListedOffer(e, item.id)}>
+                      <LockIcon />
+                    </IconButton>
+                  )}
+                </Card>
               ))}
               <Box sx={{ display: 'flex', margin: '20px' }}>
                 <Pagination 
@@ -172,6 +205,16 @@ const Profile = () => {
             </div>
           ) : <Typography gutterBottom align='center'>Brak danych</Typography>          
         }
+
+        <Button 
+          type="submit"
+          variant="contained"
+          color="error"
+          sx={{ width: '30%', alignSelf: 'center', borderRadius: 10 }}
+          onClick={removeAccount}
+        >
+          Usuń konto
+        </Button>
       </Card>
     </Backdrop>
   )
