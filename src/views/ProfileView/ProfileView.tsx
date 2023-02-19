@@ -34,6 +34,7 @@ const Profile = () => {
   const [profileData, setProfileData] = useState<ProfileData>();
   const [profilePic, setProfilePic] = useState<string>('');
   const [viewPdf, setViewPdf] = useState<string>('');
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   const auth = useAuth();
   const store = useStore();
@@ -77,11 +78,13 @@ const Profile = () => {
     }
   };
 
-  const { data: applicationsData } = store.userType === UserType.Student ? useQuery({
-    queryKey: ['applications', applicationsPage],
-    queryFn: () => getApplications({ page: applicationsPage }),
-    keepPreviousData : true
-  }) : { data: [] };
+  const { data: applicationsData, refetch: refetchApplications } = store.userType === UserType.Student ? 
+    useQuery({
+      queryKey: ['applications', applicationsPage],
+      queryFn: () => getApplications({ page: applicationsPage }),
+      keepPreviousData : true
+    }) 
+    : { data: [], refetch: () => {} };
 
   const { data: offerData } = store.userType === UserType.Company ? useQuery({
     queryKey: ['offers', offersPage],
@@ -106,10 +109,16 @@ const Profile = () => {
     setProfilePic(newPic.photo);
   };
 
-  const closeListedOffer = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
+  const closeListedOffer = 
+    async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
     e.stopPropagation();
-    await closeOffer(id);
-    getProfileData();
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    await closeOffer(id).then(async _ => {
+      await refetchApplications();
+      setIsProcessing(false);
+    });
   };
 
   const deleteListedOffer = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
@@ -118,10 +127,16 @@ const Profile = () => {
     getProfileData();
   };
 
-  const withdrawOffer = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
+  const withdrawOffer = 
+    async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
     e.stopPropagation();
-    await withdrawFromOffer(id);
-    getProfileData();
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    await withdrawFromOffer(id).then(async _ => {
+      await refetchApplications();
+      setIsProcessing(false);
+    });
   };
 
   useEffect(() => {
@@ -184,7 +199,7 @@ const Profile = () => {
               {offerData.items.map((item: any) => (
                 <Card id="offersCard" key={item.id} sx={{ boxShadow: 10 }} onClick={() => navigate(`/work-offer/${item.id}`)}>
                   <Typography id="text" height={40} noWrap>{item.title} - {item.role} ({item.status})</Typography>
-                  {item.status !== 'Finished' && (
+                  {item.status !== 'Finished' && !isProcessing && (
                     <IconButton onClick={(e) => closeListedOffer(e, item.id)}>
                       <LockIcon />
                     </IconButton>

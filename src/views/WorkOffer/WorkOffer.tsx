@@ -3,7 +3,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
-import { Avatar, Backdrop, Box, Button, Card, IconButton, Pagination, Rating, TextField, Typography } from '@mui/material';
+import { Avatar, Backdrop, Box, Button, Card, CircularProgress, 
+  IconButton, Pagination, Rating, TextField, Typography } from '@mui/material';
 import strings from '../../const/strings';
 import PDFViewer from '../../components/PDFViewer';
 import { getOffer } from '../../functions/getOffer';
@@ -28,6 +29,7 @@ const WorkOffer = () => {
   const [CV, setCV] = useState<string>('');
   const [currentApplication, setCurrentApplication] = useState<string>('');
   const [applicationsPage, setApplicationsPage] = useState<number>(1);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   
   const store = useStore();
   let { offerId } = useParams();
@@ -43,19 +45,29 @@ const WorkOffer = () => {
 
   const apply = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isProcessing) return;
+    setIsProcessing(true);
+
     const data = new FormData(event.currentTarget);
     const applyData = {
       id: offer.id,
       message: data.get('message')?.toString() || '',
     };
-    await applyForOffer(applyData);
-    offer.applied = true;
+    await applyForOffer(applyData).then(response => {
+      setIsProcessing(false);
+      if (!Array.isArray(response)) setOffer({ ...offer, applied: true });
+    });
   };
 
   const withdraw = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (offer.applicationId) await withdrawFromOffer(offer.applicationId);
-    offer.applied = false;
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    if (offer.applicationId) await withdrawFromOffer(offer.applicationId).then(response => {
+      setIsProcessing(false);
+      if (!Array.isArray(response)) setOffer({ ...offer, applied: false });
+    });
   };
 
   const rate = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -74,17 +86,35 @@ const WorkOffer = () => {
     }
   };
 
-  const { data: applicationsData } = store.userType === UserType.Company ? useQuery({
-    queryKey: ['offerApplications', applicationsPage, offer.id],
-    queryFn: () => getOfferApplications({ id: offer.id, page: applicationsPage }),
-    keepPreviousData : true
-  }) : { data: [] };
-
   const findCV = async (studentId: string, applicationId: string) => {
     const data = await getResume(studentId);
     setCV(`data:application/pdf;base64,${data.resume}`);
     setCurrentApplication(applicationId);
   };
+
+  const rejectCV = async (id: string) => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    await rejectApplication(id).then(_ => {
+      setIsProcessing(false);
+    });
+  };
+
+  const acceptCV = async (id: string) => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    await acceptApplication(id).then(_ => {
+      setIsProcessing(false);
+    });
+  };
+
+  const { data: applicationsData } = store.userType === UserType.Company ? useQuery({
+    queryKey: ['offerApplications', applicationsPage, offer.id],
+    queryFn: () => getOfferApplications({ id: offer.id, page: applicationsPage }),
+    keepPreviousData : true
+  }) : { data: [] };
 
   const startingHour = offer.workingHours ? new Date(offer.workingHours[0]?.start).toLocaleTimeString('en-US', {
     hour: '2-digit',
@@ -150,14 +180,18 @@ const WorkOffer = () => {
                   sx={{ boxShadow: 10 }} 
                   onClick={() => findCV(item.studentId, item.status === 'Closed' ? item.id : '')}
                 >
-                <Typography noWrap alignSelf='center'>{item.message} ({item.status})</Typography>
-                <IconButton onClick={async () => { await rejectApplication(item.id) }}>
-                  <CloseIcon />
-                </IconButton>
-                {item.status === 'Submitted' && (
-                  <IconButton onClick={async () => { await acceptApplication(item.id) }}>
-                    <DoneIcon />
-                  </IconButton>
+                <Typography noWrap alignSelf='center'>
+                  {item.message} ({Math.round(item.distance)} km) Status: {item.status}
+                </Typography>
+                {item.status === 'Submitted' && !isProcessing && (
+                  <div>
+                    <IconButton onClick={() => rejectCV(item.id)}>
+                      <CloseIcon />
+                    </IconButton>
+                    <IconButton onClick={() => acceptCV(item.id)}>
+                      <DoneIcon />
+                    </IconButton>
+                  </div>
                 )}
                 </Card>
             ))}
@@ -180,8 +214,8 @@ const WorkOffer = () => {
           </div>
         )}
 
-        {(offer.applied && store.userType === UserType.Student) || 
-          (CV && CV !== null && offer.created && currentApplication) && (
+        {((offer.applied && store.userType === UserType.Student) || 
+          (CV && CV !== null && offer.created && currentApplication)) && (
           <div>
             <Box component="form" sx={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }} onSubmit={rate}>
               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -225,7 +259,8 @@ const WorkOffer = () => {
               disabled={isCompany}
               sx={{ width: '30%', alignSelf: 'center', borderRadius: 10 }}
             >
-              {strings.workOffer.withdrawApplication}
+              {isProcessing && <CircularProgress id="offerSpinner" size={25} color='inherit' />}
+              {!isProcessing && strings.workOffer.withdrawApplication}
             </Button>
           </Box>
         )}
@@ -247,7 +282,8 @@ const WorkOffer = () => {
               disabled={isCompany}
               sx={{ width: '20%', alignSelf: 'center', borderRadius: 10 }}
             >
-              {strings.workOffer.sendApplication}
+              {isProcessing && <CircularProgress id="offerSpinner" size={25} color='inherit' />}
+              {!isProcessing && strings.workOffer.sendApplication}
             </Button>
           </Box>
         )}
