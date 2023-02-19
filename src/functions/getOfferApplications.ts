@@ -11,6 +11,8 @@ interface GetOfferApplicationsPayload {
 export const DEFAULT_APPLICATIONS_SIZE = 5;
 
 export const getOfferApplications = async ({ id, page, size }: GetOfferApplicationsPayload) => {
+  if (id === '') return;
+
   try {
     const store = useStore.getState();
     const { data } = await axios.get(`${API}/offers/${id}/applications`, 
@@ -28,7 +30,7 @@ export const getOfferApplications = async ({ id, page, size }: GetOfferApplicati
 
     return data;
   } catch (err: any) {
-    alert(JSON.stringify(err));
+    alert(JSON.stringify(err.response.data));
     console.log(err.response);
     return [];
   }

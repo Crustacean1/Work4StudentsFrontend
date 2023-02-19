@@ -24,6 +24,8 @@ export interface ProfileData {
   country: string;
   description: string;
   emailAddress: string;
+  education: string;
+  experience: string;
   employerId?: string;
   exceptionMessage: null;
   firstName: string;

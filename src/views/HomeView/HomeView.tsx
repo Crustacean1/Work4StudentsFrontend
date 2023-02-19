@@ -18,14 +18,13 @@ import { useQuery } from 'react-query';
 const Home = () => {
   const [page, setPage] = useState<number>(1);
   const [searchText, setSearchText] = useState<string>('');
-  const [category, setCategory] = useState<string>('');
 
   const store = useStore();
   const navigate = useNavigate();
 
   const { data, refetch } = useQuery({
     queryKey: ['offers', page],
-    queryFn: () => getOffers({ page, keywords: searchText, categories: category }),
+    queryFn: () => getOffers({ page, keywords: searchText }),
     keepPreviousData : true
   });
 
@@ -49,20 +48,9 @@ const Home = () => {
               id="searchPhrase"
               placeholder="Stanowisko, firma, słowo kluczowe"
               disableUnderline
-              className='leftInputSide'
+              className='leftInputSide rightInputSide'
               value={searchText}
               onChange={(event) => setSearchText(event.target.value)}
-            />
-            <FilledInput
-              name="category"
-              type="search"
-              fullWidth
-              id="category"
-              placeholder="Kategoria"
-              disableUnderline
-              className='rightInputSide'
-              value={category}
-              onChange={(event) => setCategory(event.target.value)}
             />
           </CardContent>
           <CardActions>

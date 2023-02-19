@@ -28,7 +28,7 @@ export const reviewOffer = async (payload: ReviewOfferPayload) => {
 
     return data;
   } catch (err: any) {
-    alert(JSON.stringify(err));
+    alert(JSON.stringify(err.response.data));
     console.log(err.response);
     return [];
   }

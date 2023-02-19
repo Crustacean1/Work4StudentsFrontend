@@ -5,7 +5,7 @@ import { useStore } from '../stores/store';
 interface GetOffersPayload {
   page: number;
   keywords: string;
-  categories: string;
+  categories?: string;
   size?: number;
 }
 
@@ -32,7 +32,7 @@ export const getOffers = async ({ page, keywords, categories, size }: GetOffersP
 
     return data;
   } catch (err: any) {
-    alert(JSON.stringify(err));
+    alert(JSON.stringify(err.response.data));
     console.log(err.response);
     return [];
   }

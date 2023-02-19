@@ -14,31 +14,34 @@ import Profile from "./views/ProfileView/ProfileView";
 import CompanyRoutes from "./components/CompanyRoutes";
 import ProfileEdit from "./views/ProfileEdit/ProfileEdit";
 import ProfileForm from "./views/ProfileForm/ProfileForm";
+import { Worker } from '@react-pdf-viewer/core';
 import { AuthProvider } from './contexts/AuthContext';
 import './App.css'
 
 function App() {
 
   return (
-    <AuthProvider>
-      <Router>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route element={<AuthRoutes />}>
-            <Route path="/profile" element={<Profile />} />
-            <Route element={<CompanyRoutes />}>
-              <Route path="/add-offer" element={<AddOffer />} />
+    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.3.122/build/pdf.worker.min.js">
+      <AuthProvider>
+        <Router>
+          <Header />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route element={<AuthRoutes />}>
+              <Route path="/profile" element={<Profile />} />
+              <Route element={<CompanyRoutes />}>
+                <Route path="/add-offer" element={<AddOffer />} />
+              </Route>
+              <Route path="/entry-form" element={<ProfileForm />} />
+              <Route path="/edit-profile" element={<ProfileEdit />} />
+              <Route path="/work-offer/:offerId" element={<WorkOffer />} />
             </Route>
-            <Route path="/entry-form" element={<ProfileForm />} />
-            <Route path="/edit-profile" element={<ProfileEdit />} />
-            <Route path="/work-offer/:offerId" element={<WorkOffer />} />
-          </Route>
-        </Routes>
-      </Router>
-    </AuthProvider>
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </Worker>
   )
 }
 

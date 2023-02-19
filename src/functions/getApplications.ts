@@ -27,7 +27,7 @@ export const getApplications = async ({ page, size }: GetApplicationsPayload) =>
 
     return data;
   } catch (err: any) {
-    alert(JSON.stringify(err));
+    alert(JSON.stringify(err.response.data));
     console.log(err.response);
     return [];
   }

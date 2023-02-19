@@ -30,3 +30,7 @@
   display: flex;
   justify-content: space-between;
 }
+
+#offerSpinner {
+  color: white;
+}

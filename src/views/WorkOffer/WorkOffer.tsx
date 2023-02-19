@@ -1,26 +1,27 @@
-import { useParams } from 'react-router-dom';
-import { Avatar, Backdrop, Box, Button, Card, IconButton, Pagination, Rating, TextField, Typography } from '@mui/material';
-import { toDateTime } from '../../utils/timeConverter';
-import './WorkOffer.css';
-import strings from '../../const/strings';
-import { useCallback, useEffect, useState } from 'react';
-import { getOffer } from '../../functions/getOffer';
-import { WorkOfferData } from '../../const/types.const';
-import { emptyOffer } from '../../const/offers.const';
-import { applyForOffer } from '../../functions/applyForOffer';
-import { UserType, useStore } from '../../stores/store';
-import { withdrawFromOffer } from '../../functions/withdrawFromOffer';
-import { imgDefault } from '../../const/profileForm.const';
-import { reviewOffer } from '../../functions/reviewOffer';
-import { useQuery } from 'react-query';
-import { getOfferApplications } from '../../functions/getOfferApplications';
-import { Document } from 'react-pdf';
-import { getResume } from '../../functions/getResume';
-import { reviewStudent } from '../../functions/reviewStudent';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-import { rejectApplication } from '../../functions/rejectApplication';
+import { useQuery } from 'react-query';
+import { useParams } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { Avatar, Backdrop, Box, Button, Card, IconButton, Pagination, Rating, TextField, Typography } from '@mui/material';
+import strings from '../../const/strings';
+import PDFViewer from '../../components/PDFViewer';
+import { getOffer } from '../../functions/getOffer';
+import { getResume } from '../../functions/getResume';
+import { emptyOffer } from '../../const/offers.const';
+import { toDateTime } from '../../utils/timeConverter';
+import { WorkOfferData } from '../../const/types.const';
+import { UserType, useStore } from '../../stores/store';
+import { reviewOffer } from '../../functions/reviewOffer';
+import { imgDefault } from '../../const/profileForm.const';
+import { applyForOffer } from '../../functions/applyForOffer';
+import { reviewStudent } from '../../functions/reviewStudent';
 import { acceptApplication } from '../../functions/acceptApplication';
+import { rejectApplication } from '../../functions/rejectApplication';
+import { withdrawFromOffer } from '../../functions/withdrawFromOffer';
+import { getOfferApplications } from '../../functions/getOfferApplications';
+
+import './WorkOffer.css';
 
 const WorkOffer = () => {
   const [offer, setOffer] = useState<WorkOfferData>(emptyOffer);
@@ -48,11 +49,13 @@ const WorkOffer = () => {
       message: data.get('message')?.toString() || '',
     };
     await applyForOffer(applyData);
+    offer.applied = true;
   };
 
   const withdraw = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (offer.applicationId) await withdrawFromOffer(offer.applicationId);
+    offer.applied = false;
   };
 
   const rate = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -79,7 +82,7 @@ const WorkOffer = () => {
 
   const findCV = async (studentId: string, applicationId: string) => {
     const data = await getResume(studentId);
-    setCV(data.resume);
+    setCV(`data:application/pdf;base64,${data.resume}`);
     setCurrentApplication(applicationId);
   };
 
@@ -168,8 +171,7 @@ const WorkOffer = () => {
             />
             </Box>
             {CV && CV !== null ? (
-              <Document file={CV} />
-
+              <PDFViewer url={CV} />
             ) : 
               (CV === null 
                 ? <Typography gutterBottom>Nie znaleziono CV</Typography>

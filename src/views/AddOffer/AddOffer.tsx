@@ -2,7 +2,7 @@ import { Dayjs } from 'dayjs';
 import { useState } from 'react';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Autocomplete, Backdrop, Box, Button, Card, Grid, TextField } from '@mui/material';
+import { Autocomplete, Backdrop, Box, Button, Card, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import strings from '../../const/strings';
 import { offerFormData } from '../../const/offers.const';
@@ -12,19 +12,29 @@ import { AddOfferData } from '../../const/types.const';
 import { addOfferValidation } from '../../utils/addOfferValidation';
 import { countries } from '../../const/countries.const';
 import { createOffer } from '../../functions/createOffer';
+import { useNavigate } from 'react-router-dom';
 
 const AddOffer = () => {
   const [bHour, setBHour] = useState<Dayjs | null>(null);
   const [eHour, setEHour] = useState<Dayjs | null>(null);
   const [errorList, setErrorList] = useState<any>({});
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   const sendOffer = async (data: any[]) => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
     const offerData = Array.from(data)
       .map(el => {
         return `"${el[0]}": "${el[1]}"`;
       });
     
-    await createOffer(JSON.parse('{' + offerData + '}'));
+    await createOffer(JSON.parse('{' + offerData + '}')).then(response => {
+      setIsProcessing(false);
+      if (!Array.isArray(response)) navigate('/');
+    });
   };
 
   const validate = (values: AddOfferData) => {
@@ -149,7 +159,8 @@ const AddOffer = () => {
             </LocalizationProvider>
           </Box>
           <Button variant="contained" type="submit" id="addOfferButton">
-            {strings.addOffer.button}
+            {isProcessing && <CircularProgress id="offerSpinner" size={25} color='inherit' />}
+            {!isProcessing && strings.addOffer.button}
           </Button>
         </Grid>
       </Card>

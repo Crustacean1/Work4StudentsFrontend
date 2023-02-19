@@ -14,10 +14,11 @@ import { useNavigate } from 'react-router-dom';
 import { getProfile } from '../../functions/getProfile';
 import { DataURIToBlob } from '../../utils/DataURIToBlob';
 import { getImage } from '../../functions/getImage';
+import { deleteResume } from '../../functions/deleteResume';
 
 const ProfileEdit = () => {
   const [errorList, setErrorList] = useState<any>({});
-  const [avatarSrc, setAvatarSrc] = useState<string>(imgDefault);
+  const [avatarSrc, setAvatarSrc] = useState<string>('');
   const [profileData, setProfileData] = useState<ProfileData>();
   const [countryValue, setCountryValue] = useState<CountryType | null>(countries[0]);
   const [countryInput, setCountryInput] = useState<string>('');
@@ -68,10 +69,10 @@ const ProfileEdit = () => {
 
     profileFormik.initialValues = {
       Description: newData?.description || '',
-      Education: '',
+      Education: newData?.education || '',
       PhoneNumber: newData?.phoneNumber || '',
       EmailAddress: newData?.emailAddress || '',
-      Experience: '',
+      Experience: newData?.experience || '',
       PositionName: newData?.positionName || '',
       Country: newData?.country || '',
       Region: newData?.region || '',
@@ -112,10 +113,10 @@ const ProfileEdit = () => {
   const profileFormik = useFormik({
     initialValues: {
       Description: profileData?.description || '',
-      Education: '',
+      Education: profileData?.education || '',
       PhoneNumber: profileData?.phoneNumber || '',
       EmailAddress: profileData?.emailAddress || '',
-      Experience: '',
+      Experience: profileData?.experience || '',
       PositionName: profileData?.positionName || '',
       Country: profileData?.country || '',
       Region: profileData?.region || '',
@@ -208,7 +209,7 @@ const ProfileEdit = () => {
       <Card id="editProfileCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
         <Grid container id="addOfferContainer" component="form" onSubmit={profileFormik.handleSubmit}>
           <Box id="editPicContainer">
-            <Avatar id="editPic" alt="Profile picture" src={profilePic ? `data:image/jpeg;base64,${profilePic}` : imgDefault} />
+            <Avatar id="editPic" alt="Profile picture" src={avatarSrc ? avatarSrc : `data:image/jpeg;base64,${profilePic}`} />
             <Button
               variant="contained"
               component="label"
@@ -225,13 +226,20 @@ const ProfileEdit = () => {
           {Object.values(profileFormData.column).map((el) => gridElement(el))}
           {store.userType === UserType.Student && (
             <Box id="editCV">
-              <Typography>{strings.profileForm.CV}</Typography>
-              <input
-                accept=".pdf"
-                type="file"
-                name="ResumeFile"
-                onChange={uploadCV}
-              />
+              <div>
+                <Typography>{strings.profileForm.CV}</Typography>
+                <input
+                  accept=".pdf"
+                  type="file"
+                  name="ResumeFile"
+                  onChange={uploadCV}
+                />
+              </div>
+              {profileData?.resume && (
+                <Button variant="contained" color="error" onClick={async () => { await deleteResume() }}>
+                  Usuń obecne CV
+                </Button>
+              )}
             </Box>
           )}
           <Button variant="contained" type="submit" id="addOfferButton">

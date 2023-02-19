@@ -2,16 +2,16 @@ import axios from 'axios';
 import { API } from '../const/API.const';
 import { useStore } from '../stores/store';
 
-export const acceptApplication = async (id: string) => {
+export const deleteResume = async () => {
   try {
     const store = useStore.getState();
-    const { data } = await axios.post(`${API}/applications/${id}/accept`, {},
+    const { data } = await axios.delete(`${API}/Profiles/resume/${store.userId}`, 
     {
       headers: {
-        'accept': '*/*',
         'Content-Type': 'application/json',
+        'accept': '*/*',
         'Authorization': 'Bearer ' + store.token
-      }
+      },
     });
 
     return data;

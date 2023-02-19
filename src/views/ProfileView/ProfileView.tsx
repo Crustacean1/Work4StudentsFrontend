@@ -1,25 +1,31 @@
-import { useEffect, useState } from 'react';
-import { Avatar, Backdrop, Box, Button, Card, CardContent, IconButton, Pagination, Rating, Typography } from '@mui/material';
-import strings from '../../const/strings';
-import { UserType, useStore } from '../../stores/store';
-import { data as profileForm } from '../../const/register.const';
-import { ProfileData } from '../../const/types.const';
-import { getProfile } from '../../functions/getProfile';
-import { imgDefault } from '../../const/profileForm.const';
-import './ProfileView.css';
-import { useQuery } from 'react-query';
-import { getApplications } from '../../functions/getApplications';
-import { getRecruiterOffers } from '../../functions/getRecruiterOffers';
-import { useNavigate } from 'react-router-dom';
-import { getReviews } from '../../functions/getReviews';
-import StarIcon from '@mui/icons-material/Star';
-import { getImage } from '../../functions/getImage';
-import { Document } from 'react-pdf/dist/esm/entry.vite';
-import { deleteAccount } from '../../functions/deleteAccount';
 import LockIcon from '@mui/icons-material/Lock';
-import { closeOffer } from '../../functions/closeOffer';
-import { deleteOffer } from '../../functions/deleteOffer';
+import StarIcon from '@mui/icons-material/Star';
+import CloseIcon from '@mui/icons-material/Close';
+import { useQuery } from 'react-query';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Avatar, Backdrop, Box, Button, Card, CircularProgress, IconButton, Pagination, Rating, Typography } from '@mui/material';
+import strings from '../../const/strings';
+import PDFViewer from '../../components/PDFViewer';
+import { getImage } from '../../functions/getImage';
 import { useAuth } from '../../contexts/AuthContext';
+import { ProfileData } from '../../const/types.const';
+import { closeOffer } from '../../functions/closeOffer';
+import { getProfile } from '../../functions/getProfile';
+import { getReviews } from '../../functions/getReviews';
+import { UserType, useStore } from '../../stores/store';
+import { deleteOffer } from '../../functions/deleteOffer';
+import { imgDefault } from '../../const/profileForm.const';
+import { deleteAccount } from '../../functions/deleteAccount';
+import { data as profileForm } from '../../const/register.const';
+import { getApplications } from '../../functions/getApplications';
+import { withdrawFromOffer } from '../../functions/withdrawFromOffer';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import { getRecruiterOffers } from '../../functions/getRecruiterOffers';
+
+import './ProfileView.css';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 const Profile = () => {
   const [applicationsPage, setApplicationsPage] = useState<number>(1);
@@ -27,10 +33,12 @@ const Profile = () => {
   const [reviewsPage, setReviewsPage] = useState<number>(1);
   const [profileData, setProfileData] = useState<ProfileData>();
   const [profilePic, setProfilePic] = useState<string>('');
+  const [viewPdf, setViewPdf] = useState<string>('');
 
   const auth = useAuth();
   const store = useStore();
   const navigate = useNavigate();
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   const profileElement = (item: { name: string[]; label: string; delimiter?: any[]; type?: UserType }) => {
     let value = '';
@@ -42,15 +50,16 @@ const Profile = () => {
       ${(index !== item.name.length - 1) ? ' ' : ''}`
     });
 
-    if(item.name.includes('resume') && (store.userType === item.type || store.userType === UserType.Admin)) 
+    if (item.name.includes('resume') && (store.userType === item.type || store.userType === UserType.Admin)) { 
       return (
         <div key={item.label}>
           <Typography variant="h6" gutterBottom>
             {item.label}:
           </Typography>
-          {profileData?.resume ? <Document onLoadError={console.error} file={`data:application/pdf;base64,${profileData.resume}`} /> : <Typography gutterBottom>Nie dodano jeszcze CV</Typography>}
+          {viewPdf ? <PDFViewer url={viewPdf} /> : <Typography gutterBottom>Nie dodano jeszcze CV</Typography>}
         </div>
       );
+    }
 
     return item.type === undefined || item.type !== undefined 
       && (store.userType === item.type || store.userType === UserType.Admin) ? (
@@ -88,7 +97,7 @@ const Profile = () => {
 
   const getProfileData = async () => {
     const newData = await getProfile();
-    console.log('xd', newData);
+    setViewPdf(`data:application/pdf;base64,${newData.resume}`);
     setProfileData(newData);
   };
 
@@ -109,12 +118,18 @@ const Profile = () => {
     getProfileData();
   };
 
+  const withdrawOffer = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
+    e.stopPropagation();
+    await withdrawFromOffer(id);
+    getProfileData();
+  };
+
   useEffect(() => {
     getProfileData();
     getProfilePic();
   }, []);
 
-  return (
+  return (profileData ? (
     <Backdrop open className="registerBackground">
       <Card id="profileCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
         <Box id="profileHeader">
@@ -140,9 +155,14 @@ const Profile = () => {
             <div>
               <Typography variant="h6" gutterBottom>Aplikacje:</Typography>
               {applicationsData.items.map((item: any) => (
-                 <Card key={item.id} id="applicationsCard" sx={{ boxShadow: 10 }} onClick={() => navigate(`/work-offer/${item.offerId}`)}>
-                  <Typography>{item.offer.company} - {item.offer.title} ({Math.round(item.distance)} km)</Typography>
-                 </Card>
+                <Card key={item.id} id="applicationsCard" sx={{ boxShadow: 10 }} onClick={() => navigate(`/work-offer/${item.offerId}`)}>
+                  <Typography id="text" height={40} noWrap>{item.offer.company} - {item.offer.title} ({Math.round(item.distance)} km) Status: {item.status}</Typography>
+                  {item.status !== "Withdrawn" && (
+                    <IconButton onClick={(e) => withdrawOffer(e, item.id)}>
+                      <CloseIcon />
+                    </IconButton>
+                  )}
+                </Card>
               ))}
               <Box sx={{ display: 'flex', margin: '20px' }}>
               <Pagination 
@@ -163,7 +183,7 @@ const Profile = () => {
               <Typography variant="h6" gutterBottom>Oferty:</Typography>
               {offerData.items.map((item: any) => (
                 <Card id="offersCard" key={item.id} sx={{ boxShadow: 10 }} onClick={() => navigate(`/work-offer/${item.id}`)}>
-                  <Typography id="offerText" height={40} noWrap>{item.title} - {item.role} ({item.status})</Typography>
+                  <Typography id="text" height={40} noWrap>{item.title} - {item.role} ({item.status})</Typography>
                   {item.status !== 'Finished' && (
                     <IconButton onClick={(e) => closeListedOffer(e, item.id)}>
                       <LockIcon />
@@ -219,6 +239,13 @@ const Profile = () => {
         </Button>
       </Card>
     </Backdrop>
+  ): (
+    <Backdrop open className="registerBackground">
+      <Card id="profileCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
+        <CircularProgress id="spinner" />
+      </Card>
+    </Backdrop>
+  )
   )
 }
 
