@@ -180,8 +180,14 @@ const WorkOffer = () => {
                   sx={{ boxShadow: 10 }} 
                   onClick={() => findCV(item.studentId, item.status === 'Closed' ? item.id : '')}
                 >
-                <Typography noWrap alignSelf='center'>
-                  {item.message} ({Math.round(item.distance)} km) Status: {item.status}
+                <Typography marginX={1} noWrap alignSelf='center'>
+                  {`${item.message} (${Math.round(item.distance)} km)`} 
+                </Typography>
+                <Typography marginX={1} noWrap alignSelf='center'>
+                  {`Status: ${item.status}`} 
+                </Typography>
+                <Typography marginX={1} noWrap alignSelf='center'>
+                  {`Pokrycie czasowe: ${item.workTimeOverlap * 100}%`} 
                 </Typography>
                 {item.status === 'Submitted' && !isProcessing && (
                   <div>
