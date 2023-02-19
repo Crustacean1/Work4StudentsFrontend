@@ -87,9 +87,13 @@ const WorkOffer = () => {
   };
 
   const findCV = async (studentId: string, applicationId: string) => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
     const data = await getResume(studentId);
     setCV(`data:application/pdf;base64,${data.resume}`);
     setCurrentApplication(applicationId);
+    setIsProcessing(false);
   };
 
   const rejectCV = async (id: string) => {
@@ -215,7 +219,7 @@ const WorkOffer = () => {
             ) : 
               (CV === null 
                 ? <Typography gutterBottom>Nie znaleziono CV</Typography>
-                : <Typography gutterBottom>Wybierz CV z listy</Typography>)
+                : <Typography gutterBottom>{isProcessing ? 'Ładowanie...' : 'Wybierz CV z listy'}</Typography>)
             }
           </div>
         )}
