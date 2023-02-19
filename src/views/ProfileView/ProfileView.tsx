@@ -4,7 +4,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useQuery } from 'react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Backdrop, Box, Button, Card, CircularProgress, IconButton, Pagination, Rating, Typography } from '@mui/material';
+import { Avatar, Backdrop, Box, Button, Card, CircularProgress, 
+  IconButton, Pagination, Rating, Typography } from '@mui/material';
 import strings from '../../const/strings';
 import PDFViewer from '../../components/PDFViewer';
 import { getImage } from '../../functions/getImage';
@@ -20,12 +21,8 @@ import { deleteAccount } from '../../functions/deleteAccount';
 import { data as profileForm } from '../../const/register.const';
 import { getApplications } from '../../functions/getApplications';
 import { withdrawFromOffer } from '../../functions/withdrawFromOffer';
-import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import { getRecruiterOffers } from '../../functions/getRecruiterOffers';
-
 import './ProfileView.css';
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 const Profile = () => {
   const [applicationsPage, setApplicationsPage] = useState<number>(1);
@@ -39,7 +36,6 @@ const Profile = () => {
   const auth = useAuth();
   const store = useStore();
   const navigate = useNavigate();
-  const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   const profileElement = (item: { name: string[]; label: string; delimiter?: any[]; type?: UserType }) => {
     let value = '';
@@ -57,7 +53,9 @@ const Profile = () => {
           <Typography variant="h6" gutterBottom>
             {item.label}:
           </Typography>
-          {viewPdf ? <PDFViewer url={viewPdf} /> : <Typography gutterBottom>Nie dodano jeszcze CV</Typography>}
+          {viewPdf !== null && viewPdf !== 'data:application/pdf;base64,' 
+            ? <PDFViewer url={viewPdf} /> 
+            : <Typography gutterBottom>Nie dodano jeszcze CV</Typography>}
         </div>
       );
     }
@@ -100,7 +98,7 @@ const Profile = () => {
 
   const getProfileData = async () => {
     const newData = await getProfile();
-    setViewPdf(`data:application/pdf;base64,${newData.resume}`);
+    if (newData.resume !== null) setViewPdf(`data:application/pdf;base64,${newData.resume}`);
     setProfileData(newData);
   };
 
@@ -144,7 +142,7 @@ const Profile = () => {
     getProfilePic();
   }, []);
 
-  return (profileData ? (
+  return profileData ? (
     <Backdrop open className="registerBackground">
       <Card id="profileCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
         <Box id="profileHeader">
@@ -172,7 +170,7 @@ const Profile = () => {
               {applicationsData.items.map((item: any) => (
                 <Card key={item.id} id="applicationsCard" sx={{ boxShadow: 10 }} onClick={() => navigate(`/work-offer/${item.offerId}`)}>
                   <Typography id="text" height={40} noWrap>{item.offer.company} - {item.offer.title} ({Math.round(item.distance)} km) Status: {item.status}</Typography>
-                  {item.status !== "Withdrawn" && (
+                  {item.status === "Submitted" && (
                     <IconButton onClick={(e) => withdrawOffer(e, item.id)}>
                       <CloseIcon />
                     </IconButton>
@@ -254,14 +252,13 @@ const Profile = () => {
         </Button>
       </Card>
     </Backdrop>
-  ): (
+  ) : (
     <Backdrop open className="registerBackground">
       <Card id="profileCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
         <CircularProgress id="spinner" />
       </Card>
     </Backdrop>
-  )
-  )
+  );
 }
 
 export default Profile

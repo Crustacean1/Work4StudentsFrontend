@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Autocomplete, Avatar, Backdrop, Box, Button, Card, Grid, TextField, Typography } from '@mui/material';
+import { Autocomplete, Avatar, Backdrop, Box, Button, Card, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import strings from '../../const/strings';
 import { imgDefault, profileFormData } from '../../const/profileForm.const';
 import './ProfileEdit.css';
@@ -65,7 +65,6 @@ const ProfileEdit = () => {
 
   const getProfileData = async () => {
     const newData = await getProfile();
-    console.log(newData);
 
     profileFormik.initialValues = {
       Description: newData?.description || '',
@@ -95,7 +94,8 @@ const ProfileEdit = () => {
 
   const getProfilePic = async () => {
     const newPic = await getImage();
-    setProfilePic(newPic.photo);
+    if (newPic.photo) setProfilePic(newPic.photo);
+    else setAvatarSrc(imgDefault);
   };
 
   useEffect(() => {
@@ -204,7 +204,7 @@ const ProfileEdit = () => {
     ) : null
   };
 
-  return (
+  return profileData ? (
     <Backdrop open className="registerBackground">
       <Card id="editProfileCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
         <Grid container id="addOfferContainer" component="form" onSubmit={profileFormik.handleSubmit}>
@@ -248,7 +248,13 @@ const ProfileEdit = () => {
         </Grid>
       </Card>
     </Backdrop>
-  )
+  ) : (
+    <Backdrop open className="registerBackground">
+      <Card id="profileCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
+        <CircularProgress id="spinner" />
+      </Card>
+    </Backdrop>
+  );
 }
 
 export default ProfileEdit

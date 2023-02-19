@@ -18,7 +18,7 @@ export const editProfile = async (payload: EditProfilePayload) => {
       .put(`${API}/Profiles/update/${
       store.userType === UserType.Student 
         ? `student/${store.userProfileId}` 
-        : `employer/${store.userProfileId}`}`,
+        : `employer/${store.userProfileId}`}/correctedFiles`,
       formData,
       {
         headers: {
