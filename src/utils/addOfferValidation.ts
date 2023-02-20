@@ -14,8 +14,6 @@ export const addOfferValidation = (values: AddOfferData) => {
     description: '',
     payrangeMin: '',
     payrangeMax: '',
-    beginHour: '',
-    endHour: '',
   };
 
   [values.title, values.role, values.country, values.region,
@@ -40,8 +38,6 @@ export const addOfferValidation = (values: AddOfferData) => {
 
   if (values.payrangeMin && values.payrangeMax && Number(values.payrangeMin) > Number(values.payrangeMax)) 
     errors.payrangeMin = errors.payrangeMax = strings.registerValidation.data;
-  if (!values.beginHour) errors.beginHour = strings.registerValidation.data;
-  if (!values.endHour) errors.endHour = strings.registerValidation.data;
 
   return errors;
 }

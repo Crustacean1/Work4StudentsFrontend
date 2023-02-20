@@ -1,3 +1,4 @@
+import dayjs, { Dayjs } from "dayjs";
 import { WorkOfferData } from "./types.const";
 
 export const offerFormData = {
@@ -51,13 +52,58 @@ export const offerFormData = {
       label: 'Opis',
       multiline: true
     },
-  ]
+  ],
+  days: [
+    {
+      name: 'Poniedziałek',
+      id: 1,
+    },
+    {
+      name: 'Wtorek',
+      id: 2,
+    },
+    {
+      name: 'Środa',
+      id: 3,
+    },
+    {
+      name: 'Czwartek',
+      id: 4,
+    },
+    {
+      name: 'Piątek',
+      id: 5,
+    },
+    {
+      name: 'Sobota',
+      id: 6,
+    },
+    {
+      name: 'Niedziela',
+      id: 0,
+    },
+  ],
+};
+
+export const emptyAvailability = () => {
+  const result = [];
+
+  for (let day = 0; day < 7; day++) {
+    const emptyDay = {
+      begin: dayjs().day(day),
+      end: dayjs().day(day),
+    };
+    result.push(emptyDay);
+  }
+
+  return result;
 };
 
 export const emptyOffer: WorkOfferData = {
   applied: false,
   created: false,
   company: {
+    id: '',
     name: '',
     nip: ''
   },

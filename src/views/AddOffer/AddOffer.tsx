@@ -5,7 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Autocomplete, Backdrop, Box, Button, Card, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import strings from '../../const/strings';
-import { offerFormData } from '../../const/offers.const';
+import { emptyAvailability, offerFormData } from '../../const/offers.const';
 import './AddOffer.css';
 import { useFormik } from 'formik';
 import { AddOfferData } from '../../const/types.const';
@@ -14,9 +14,10 @@ import { countries } from '../../const/countries.const';
 import { createOffer } from '../../functions/createOffer';
 import { useNavigate } from 'react-router-dom';
 
+const emptyAvailabilityObj = emptyAvailability();
+
 const AddOffer = () => {
-  const [bHour, setBHour] = useState<Dayjs | null>(null);
-  const [eHour, setEHour] = useState<Dayjs | null>(null);
+  const [availability, setAvailability] = useState<{ begin: Dayjs; end: Dayjs; }[]>(emptyAvailabilityObj);
   const [errorList, setErrorList] = useState<any>({});
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
@@ -26,15 +27,28 @@ const AddOffer = () => {
     if (isProcessing) return;
     setIsProcessing(true);
 
+    const availabilityData: { DayOfWeek: number; StartHour: number; Duration: number; }[] = [];
+    availability.forEach((el) => {
+      availabilityData.push({
+        DayOfWeek: el.begin.day(),
+        StartHour: el.begin.hour(),
+        Duration: el.end.hour() - el.begin.hour()
+      });
+    });
+
     const offerData = Array.from(data)
       .map(el => {
         return `"${el[0]}": "${el[1]}"`;
       });
     
-    await createOffer(JSON.parse('{' + offerData + '}')).then(response => {
+    const JSONdata = JSON.parse('{' + offerData + '}');
+    JSONdata.availability = availabilityData;
+    
+    await createOffer(JSONdata).then(response => {
       setIsProcessing(false);
       if (!Array.isArray(response)) navigate('/');
     });
+    setIsProcessing(false);
   };
 
   const validate = (values: AddOfferData) => {
@@ -56,8 +70,6 @@ const AddOffer = () => {
       description: '',
       payrangeMin: '',
       payrangeMax: '',
-      beginHour: '',
-      endHour: '',
     },
     validate,
     onSubmit: (values) => {
@@ -105,7 +117,6 @@ const AddOffer = () => {
     );
   };
 
-
   const gridElement = (el: any) => {
     if (el.name === 'country') return dropdownElement(el);
     return (
@@ -125,43 +136,51 @@ const AddOffer = () => {
     )
   };
 
-  const timeElement = (params: any) => <TextField sx={{ width: '48%', marginTop: '5px' }} {...params} />;
+  const timeElement = (params: any) => <TextField sx={{ width: '48%', marginTop: '5px' }} {...params} />
+
+  const timePickerElement = (el: { id: number; name: string; }) => {
+    return (
+      <div id="dateContainer" key={el.id}>
+        <Typography>{el.name}</Typography>
+        <TimePicker
+          label={'Godzina rozpoczęcia pracy'}
+          value={availability[el.id].begin}
+          onChange={(newValue) => {
+            const newAvailability = [...availability];
+            newAvailability[el.id].begin = newValue || newAvailability[el.id].begin;
+            setAvailability(newAvailability);
+          }}
+          renderInput={timeElement}
+        />
+        <TimePicker
+          label={'Godzina zakończenia pracy'}
+          value={availability[el.id].end}
+          onChange={(newValue) => {
+            const newAvailability = [...availability];
+            if (newValue) newAvailability[el.id].end = newValue;
+            setAvailability(newAvailability);
+          }}
+          renderInput={timeElement}
+        />
+      </div>
+    )
+  };
 
   return (
     <Backdrop open className="registerBackground">
       <Card id="addOfferCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
         <Grid container id="addOfferContainer" component="form" onSubmit={offerFormik.handleSubmit}>
           {Object.values(offerFormData.column).map((el) => gridElement(el))}
-          <Box id="timeContainer">
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <TimePicker
-                label="Godzina rozpoczęcia pracy"
-                value={bHour}
-                onChange={(newValue) => {
-                  setBHour(newValue);
-                  try {
-                    offerFormik.setFieldValue('beginHour', newValue?.toISOString());
-                  } catch(err) {}
-                }}
-                renderInput={timeElement}
-              />
-              <TimePicker
-                label="Godzina zakończenia pracy"
-                value={eHour}
-                onChange={(newValue) => {
-                  setEHour(newValue);
-                  try {
-                    offerFormik.setFieldValue('endHour', newValue?.toISOString());
-                  } catch(err) {}
-                }}
-                renderInput={timeElement}
-              />
-            </LocalizationProvider>
+          <Typography width={'95%'} marginY={1}>Godziny preferowanej dostępności:</Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            {Object.values(offerFormData.days).map((el) => timePickerElement(el))}
+          </LocalizationProvider>
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" type="submit" id="addOfferButton">
+              {isProcessing && <CircularProgress id="offerSpinner" size={25} color='inherit' />}
+              {!isProcessing && strings.addOffer.button}
+            </Button>
           </Box>
-          <Button variant="contained" type="submit" id="addOfferButton">
-            {isProcessing && <CircularProgress id="offerSpinner" size={25} color='inherit' />}
-            {!isProcessing && strings.addOffer.button}
-          </Button>
         </Grid>
       </Card>
     </Backdrop>

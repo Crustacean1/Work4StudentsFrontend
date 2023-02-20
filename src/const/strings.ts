@@ -3,6 +3,7 @@ export default {
     button: 'Dodaj ogłoszenie',
   },
   header: {
+    adminPanel: 'Panel admina',
     avatarText: "The website's logo",
     createAccount: 'Załóż konto',
     editProfile: 'Edytuj profil',

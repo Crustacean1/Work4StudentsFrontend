@@ -71,7 +71,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const logout = () => {
+    store.setUserId(null);
+    store.setUserType(null);
     store.setToken(null);
+    store.setUserProfileId(null);
   }
 
   return (

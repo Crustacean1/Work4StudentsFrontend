@@ -60,7 +60,7 @@ const Home = () => {
           </Button>
         </CardActions>
       </Card>
-      {store.userType != UserType.Student && (
+      {store.userType === UserType.Company && (
         <Box textAlign="center">
           <Button 
             size="large"

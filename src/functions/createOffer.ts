@@ -4,8 +4,7 @@ import { AddOfferData } from '../const/types.const';
 import { useStore } from '../stores/store';
 
 interface AddOfferPayload extends AddOfferData {
-  beginHour: string;
-  endHour: string;
+  availability: { DayOfWeek: string; StartHour: number; Duration: number; }[];
 }
 
 export const createOffer = async (payload: AddOfferPayload) => {
@@ -27,12 +26,7 @@ export const createOffer = async (payload: AddOfferPayload) => {
         min: payload.payrangeMin,
         max: payload.payrangeMax
       },
-      workingHours: [
-        {
-          start: payload.beginHour,
-          end: payload.endHour,
-        }
-      ],
+      workingHours: payload.availability,
     },
     {
       headers: {

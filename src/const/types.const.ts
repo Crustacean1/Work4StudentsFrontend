@@ -87,8 +87,6 @@ export interface AddOfferData {
   payrangeMin: string;
   payrangeMax: string;
   role: string;
-  beginHour: string;
-  endHour: string;
 }
 
 export interface EditProfileData {

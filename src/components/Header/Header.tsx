@@ -63,7 +63,10 @@ const Header = () => {
           </>
         )}
         {isAdmin && (
-          headerButton(strings.header.logout, handleLogout)
+          <>
+          {headerButton(strings.header.createAccount, () => navigate("/admin-panel"))}
+          {headerButton(strings.header.logout, handleLogout)}
+          </>
         )}
       </Toolbar>
     </AppBar>
