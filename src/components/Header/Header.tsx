@@ -64,7 +64,7 @@ const Header = () => {
         )}
         {isAdmin && (
           <>
-          {headerButton(strings.header.createAccount, () => navigate("/admin-panel"))}
+          {headerButton(strings.header.adminPanel, () => navigate("/admin-panel"))}
           {headerButton(strings.header.logout, handleLogout)}
           </>
         )}
