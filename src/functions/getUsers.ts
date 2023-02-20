@@ -2,27 +2,27 @@ import axios from 'axios';
 import { API } from '../const/API.const';
 import { useStore } from '../stores/store';
 
-interface GetRecruiterOffersPayload {
+interface GetUsersPayload {
   page: number;
-  id?: string;
+  keywords?: string;
   size?: number;
 }
 
-export const DEFAULT_OFFERS_SIZE = 5;
+export const DEFAULT_PAGE_SIZE = 10;
 
-export const getRecruiterOffers = async ({ page, id, size }: GetRecruiterOffersPayload) => {
+export const getUsers = async ({ page, size }: GetUsersPayload) => {
   try {
     const store = useStore.getState();
-    const { data } = await axios.get(`${API}/recruiter/${id || store.userId}/offers`, 
+    const { data } = await axios.get(`${API}/Accounts`, 
     {
       headers: {
-        'accept': '*/*',
         'Content-Type': 'application/json',
+        'accept': '*/*',
         'Authorization': 'Bearer ' + store.token
       },
       params: {
         page,
-        pageSize: size || DEFAULT_OFFERS_SIZE
+        pageSize: size || DEFAULT_PAGE_SIZE
       }
     });
 

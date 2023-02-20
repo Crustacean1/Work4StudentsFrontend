@@ -8,9 +8,11 @@ import Home from './views/HomeView/HomeView';
 import Header from "./components/Header/Header";
 import AuthRoutes from "./components/AuthRoutes";
 import AddOffer from "./views/AddOffer/AddOffer";
+import AdminRoutes from "./components/AdminRoutes";
 import WorkOffer from "./views/WorkOffer/WorkOffer";
 import Register from './views/Register/RegisterView';
 import Profile from "./views/ProfileView/ProfileView";
+import AdminPanel from "./views/AdminPanel/AdminPanel";
 import CompanyRoutes from "./components/CompanyRoutes";
 import ProfileEdit from "./views/ProfileEdit/ProfileEdit";
 import ProfileForm from "./views/ProfileForm/ProfileForm";
@@ -26,11 +28,16 @@ function App() {
         <Router>
           <Header />
           <Routes>
+            <Route element={<AdminRoutes />}>
+              <Route path="/admin-panel" element={<AdminPanel />} />
+            </Route>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route element={<AuthRoutes />}>
               <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/:id" element={<Profile />} />
+              <Route path="/profile/:type/:id" element={<Profile />} />
               <Route element={<CompanyRoutes />}>
                 <Route path="/add-offer" element={<AddOffer />} />
               </Route>

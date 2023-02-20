@@ -34,60 +34,55 @@ const Home = () => {
   };
 
   return (
-    <Box sx={{ 
-      width: '100%',
-      height: '100%'
-    }}>
-      <Box id="rootBox">
-        <Card id="card" sx={{ boxShadow: 10 }}>
-          <CardContent id="cardContent">
-            <FilledInput
-              name="searchPhrase"
-              type="search"
-              fullWidth
-              id="searchPhrase"
-              placeholder="Stanowisko, firma, słowo kluczowe"
-              disableUnderline
-              className='leftInputSide rightInputSide'
-              value={searchText}
-              onChange={(event) => setSearchText(event.target.value)}
-            />
-          </CardContent>
-          <CardActions>
-            <Button
-              variant="contained"
-              type="submit"
-              id='searchButton'
-              onClick={searchOffers}
-            >
-              {strings.homeView.search}
-            </Button>
-          </CardActions>
-        </Card>
-        {store.userType != UserType.Student && (
-          <Box textAlign="center">
-            <Button 
-              size="large"
-              id="addOffer"
-              color="inherit"
-              variant="contained"
-              endIcon={<ForwardIcon />}
-              onClick={() => navigate('/add-offer')}
-            >
-              {strings.homeView.addOffer}
-            </Button>
-          </Box>
-        )}
-        {data?.items && data.items.map((item: any) => <WorkOfferCard key={item.id} offer={item} />) }
-        <Box sx={{ display: 'flex', margin: '20px' }}>
-          <Pagination 
-            count={data?.metaData?.pageCount ?? 1}
-            page={page}
-            color="primary"
-            sx={{ margin: 'auto' }} 
-            onChange={(_, page) => setPage(page)}
+    <Box id="rootBox">
+      <Card id="card" sx={{ boxShadow: 10 }}>
+        <CardContent id="cardContent">
+          <FilledInput
+            name="searchPhrase"
+            type="search"
+            fullWidth
+            id="searchPhrase"
+            placeholder="Stanowisko, firma, słowo kluczowe"
+            disableUnderline
+            className='leftInputSide rightInputSide'
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
           />
+        </CardContent>
+        <CardActions>
+          <Button
+            variant="contained"
+            type="submit"
+            id='searchButton'
+            onClick={searchOffers}
+          >
+            {strings.homeView.search}
+          </Button>
+        </CardActions>
+      </Card>
+      {store.userType != UserType.Student && (
+        <Box textAlign="center">
+          <Button 
+            size="large"
+            id="addOffer"
+            color="inherit"
+            variant="contained"
+            endIcon={<ForwardIcon />}
+            onClick={() => navigate('/add-offer')}
+          >
+            {strings.homeView.addOffer}
+          </Button>
         </Box>
+      )}
+      {data?.items && data.items.map((item: any) => <WorkOfferCard key={item.id} offer={item} />) }
+      <Box sx={{ display: 'flex', margin: '20px' }}>
+        <Pagination 
+          count={data?.metaData?.pageCount ?? 1}
+          page={page}
+          color="primary"
+          sx={{ margin: 'auto' }} 
+          onChange={(_, page) => setPage(page)}
+        />
       </Box>
     </Box>
   )

@@ -1,7 +1,7 @@
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import { useQuery } from 'react-query';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { Avatar, Backdrop, Box, Button, Card, CircularProgress, 
   IconButton, Pagination, Rating, TextField, Typography } from '@mui/material';
@@ -23,20 +23,26 @@ import { withdrawFromOffer } from '../../functions/withdrawFromOffer';
 import { getOfferApplications } from '../../functions/getOfferApplications';
 
 import './WorkOffer.css';
+import { getImage } from '../../functions/getImage';
 
 const WorkOffer = () => {
   const [offer, setOffer] = useState<WorkOfferData>(emptyOffer);
   const [CV, setCV] = useState<string>('');
+  const [offerPic, setOfferPic] = useState<string>('');
   const [currentApplication, setCurrentApplication] = useState<string>('');
   const [applicationsPage, setApplicationsPage] = useState<number>(1);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   
   const store = useStore();
+  const navigate = useNavigate();
   let { offerId } = useParams();
 
   const getOfferData = useCallback(async () => {
     const data = await getOffer(offerId || '');
     if (data) setOffer(data);
+
+    const newPic = await getImage(data.company.id);
+    setOfferPic(newPic.photo);
   }, []);
 
   useEffect(() => {
@@ -149,9 +155,10 @@ const WorkOffer = () => {
             </Box>
             <Avatar
               id="companyLogo"
-              src={imgDefault}
+              src={offerPic ? `data:image/jpeg;base64,${offerPic}` : imgDefault}
               alt="The company's logo."
               sx={{ marginLeft: '10px', maxWidth: '40%' }}
+              onClick={() => navigate(`/profile/${offer.company.id}`)}
             />
           </Box>
         </Box>

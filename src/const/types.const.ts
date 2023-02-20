@@ -70,6 +70,7 @@ export interface WorkOfferData extends WorkOfferCardData {
   applicationId?: string;
   role: string;
   company: {
+    id: string;
     name: string;
     nip: string;
   };

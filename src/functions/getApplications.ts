@@ -4,15 +4,16 @@ import { useStore } from '../stores/store';
 
 interface GetApplicationsPayload {
   page: number;
+  id?: string;
   size?: number;
 }
 
 export const DEFAULT_APPLICATIONS_SIZE = 5;
 
-export const getApplications = async ({ page, size }: GetApplicationsPayload) => {
+export const getApplications = async ({ page, id, size }: GetApplicationsPayload) => {
   try {
     const store = useStore.getState();
-    const { data } = await axios.get(`${API}/student/applications`, 
+    const { data } = await axios.get(`${API}/student/${id || store.userId}/applications`, 
     {
       headers: {
         'accept': '*/*',

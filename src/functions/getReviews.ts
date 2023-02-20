@@ -4,18 +4,20 @@ import { UserType, useStore } from '../stores/store';
 
 interface GetReviewsPayload {
   page: number;
+  id?: string;
+  type?: UserType;
   size?: number;
 }
 
 export const DEFAULT_REVIEWS_SIZE = 5;
 
-export const getReviews = async ({ page, size }: GetReviewsPayload) => {
+export const getReviews = async ({ page, id, type, size }: GetReviewsPayload) => {
   try {
     const store = useStore.getState();
     const { data } = await axios.get(`${API}/${
-      store.userType === UserType.Student 
-        ? `student/${store.userId}` 
-        : `recruiter/${store.userId}`}/reviews`, 
+      type == UserType.Student || store.userType === UserType.Student 
+        ? `student/${id || store.userId}` 
+        : `recruiter/${id || store.userId}`}/reviews`, 
     {
       headers: {
         'accept': '*/*',

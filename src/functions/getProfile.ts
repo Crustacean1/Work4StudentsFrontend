@@ -2,14 +2,14 @@ import axios from 'axios';
 import { API } from '../const/API.const';
 import { UserType, useStore } from '../stores/store';
 
-export const getProfile = async () => {
+export const getProfile = async (id?: string, type?: UserType) => {
   try {
     const store = useStore.getState();
     const { data } = await axios
         .get(`${API}/Profiles/get/${
-          store.userType === UserType.Student 
-            ? `studentByStudentId/${store.userId}` 
-            : `employerByEmployerId/${store.userId}`}`, 
+          type == UserType.Student || store.userType === UserType.Student 
+            ? `studentByStudentId/${id || store.userId}` 
+            : `employerByEmployerId/${id || store.userId}`}`, 
     {
       headers: {
         'accept': '*/*',

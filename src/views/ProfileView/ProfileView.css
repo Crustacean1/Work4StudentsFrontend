@@ -63,6 +63,11 @@
   padding: 0 10px 0 10px;
 }
 
+#profileButton {
+  height: 50%;
+  align-self: center;
+}
+
 #spinner {
   align-self: center;
 }

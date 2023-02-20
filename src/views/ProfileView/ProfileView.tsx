@@ -1,9 +1,10 @@
 import LockIcon from '@mui/icons-material/Lock';
 import StarIcon from '@mui/icons-material/Star';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useQuery } from 'react-query';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, Backdrop, Box, Button, Card, CircularProgress, 
   IconButton, Pagination, Rating, Typography } from '@mui/material';
 import strings from '../../const/strings';
@@ -23,6 +24,8 @@ import { getApplications } from '../../functions/getApplications';
 import { withdrawFromOffer } from '../../functions/withdrawFromOffer';
 import { getRecruiterOffers } from '../../functions/getRecruiterOffers';
 import './ProfileView.css';
+import { deleteReview } from '../../functions/deleteReview';
+import { deleteApplication } from '../../functions/deleteApplication';
 
 const Profile = () => {
   const [applicationsPage, setApplicationsPage] = useState<number>(1);
@@ -36,6 +39,12 @@ const Profile = () => {
   const auth = useAuth();
   const store = useStore();
   const navigate = useNavigate();
+  const { id, type }: { id?: string; type?: number;} = useParams();
+
+  const isAdmin = store.userType === UserType.Admin;
+  const viewAllowance = isAdmin || !id;
+  const isStudent = (type == UserType.Student && isAdmin) || store.userType === UserType.Student;
+  const isCompany = (type == UserType.Company && isAdmin) || store.userType === UserType.Company;
 
   const profileElement = (item: { name: string[]; label: string; delimiter?: any[]; type?: UserType }) => {
     let value = '';
@@ -47,21 +56,22 @@ const Profile = () => {
       ${(index !== item.name.length - 1) ? ' ' : ''}`
     });
 
-    if (item.name.includes('resume') && (store.userType === item.type || store.userType === UserType.Admin)) { 
-      return (
+    if (item.name.includes('resume') 
+      && (store.userType === item.type || (isAdmin && type === item.type))) { 
+        return (
         <div key={item.label}>
           <Typography variant="h6" gutterBottom>
             {item.label}:
           </Typography>
-          {viewPdf !== null && viewPdf !== 'data:application/pdf;base64,' 
+          {!viewPdf && viewPdf !== 'data:application/pdf;base64,' 
             ? <PDFViewer url={viewPdf} /> 
             : <Typography gutterBottom>Nie dodano jeszcze CV</Typography>}
         </div>
       );
     }
 
-    return item.type === undefined || item.type !== undefined 
-      && (store.userType === item.type || store.userType === UserType.Admin) ? (
+    return item.type === undefined || (item.type !== undefined 
+      && store.userType === item.type) || (isAdmin && type === item.type) ? (
       <Typography key={item.label} variant="h6" gutterBottom>
         {item.label}: {value}
       </Typography>
@@ -76,34 +86,34 @@ const Profile = () => {
     }
   };
 
-  const { data: applicationsData, refetch: refetchApplications } = store.userType === UserType.Student ? 
+  const { data: applicationsData, refetch: refetchApplications } = isStudent ? 
     useQuery({
       queryKey: ['applications', applicationsPage],
-      queryFn: () => getApplications({ page: applicationsPage }),
+      queryFn: () => getApplications({ id, page: applicationsPage }),
       keepPreviousData : true
     }) 
     : { data: [], refetch: () => {} };
 
-  const { data: offerData } = store.userType === UserType.Company ? useQuery({
+  const { data: offerData, refetch: refetchOffers } = isCompany ? useQuery({
     queryKey: ['offers', offersPage],
-    queryFn: () => getRecruiterOffers({ page: offersPage }),
+    queryFn: () => getRecruiterOffers({ id, page: offersPage }),
     keepPreviousData : true
-  }) : { data: [] };
+  }) : { data: [], refetch: () => {} };
 
-  const { data: reviewsData } = useQuery({
+  const { data: reviewsData, refetch: refetchReviews } = useQuery({
     queryKey: ['reviews', reviewsPage],
-    queryFn: () => getReviews({ page: reviewsPage }),
+    queryFn: () => getReviews({ id, type, page: reviewsPage }),
     keepPreviousData : true
   });
 
   const getProfileData = async () => {
-    const newData = await getProfile();
+    const newData = await getProfile(id, type);
     if (newData.resume !== null) setViewPdf(`data:application/pdf;base64,${newData.resume}`);
     setProfileData(newData);
   };
 
   const getProfilePic = async () => {
-    const newPic = await getImage();
+    const newPic = await getImage(id);
     setProfilePic(newPic.photo);
   };
 
@@ -121,17 +131,43 @@ const Profile = () => {
 
   const deleteListedOffer = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
     e.stopPropagation();
-    await deleteOffer(id);
-    getProfileData();
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    await deleteOffer(id).then(async _ => {
+      await refetchOffers();
+      setIsProcessing(false);
+    });
   };
 
-  const withdrawOffer = 
-    async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
+  const withdrawOffer = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
     e.stopPropagation();
     if (isProcessing) return;
     setIsProcessing(true);
 
     await withdrawFromOffer(id).then(async _ => {
+      await refetchApplications();
+      setIsProcessing(false);
+    });
+  };
+
+  const deleteUserReview = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
+    e.stopPropagation();
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    await deleteReview(id).then(async _ => {
+      await refetchReviews();
+      setIsProcessing(false);
+    });
+  };
+
+  const deleteStudentApplication = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
+    e.stopPropagation();
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    await deleteApplication(id).then(async _ => {
       await refetchApplications();
       setIsProcessing(false);
     });
@@ -163,16 +199,20 @@ const Profile = () => {
           </Box>
         </Box>
         {profileForm.profile.info.map((item) => profileElement(item))}
-        {store.userType === UserType.Student && applicationsData?.items &&
-          applicationsData.items.length > 0 && (
+        {viewAllowance && isStudent && applicationsData?.items && applicationsData.items.length > 0 && (
             <div>
               <Typography variant="h6" gutterBottom>Aplikacje:</Typography>
               {applicationsData.items.map((item: any) => (
                 <Card key={item.id} id="applicationsCard" sx={{ boxShadow: 10 }} onClick={() => navigate(`/work-offer/${item.offerId}`)}>
                   <Typography id="text" height={40} noWrap>{item.offer.company} - {item.offer.title} ({Math.round(item.distance)} km) Status: {item.status}</Typography>
                   {item.status === "Submitted" && (
-                    <IconButton onClick={(e) => withdrawOffer(e, item.id)}>
+                    <IconButton id="profileButton" onClick={(e) => withdrawOffer(e, item.id)}>
                       <CloseIcon />
+                    </IconButton>
+                  )}
+                  {isAdmin && !isProcessing && (
+                    <IconButton id="profileButton" onClick={(e) => deleteStudentApplication(e, item.id)}>
+                      <DeleteIcon />
                     </IconButton>
                   )}
                 </Card>
@@ -190,16 +230,20 @@ const Profile = () => {
           )
         }
 
-        {store.userType === UserType.Company &&
-          offerData?.items && offerData.items.length > 0 && (
+        {viewAllowance && isCompany && offerData?.items && offerData.items.length > 0 && (
             <div>
               <Typography variant="h6" gutterBottom>Oferty:</Typography>
               {offerData.items.map((item: any) => (
                 <Card id="offersCard" key={item.id} sx={{ boxShadow: 10 }} onClick={() => navigate(`/work-offer/${item.id}`)}>
                   <Typography id="text" height={40} noWrap>{item.title} - {item.role} ({item.status})</Typography>
                   {item.status !== 'Finished' && !isProcessing && (
-                    <IconButton onClick={(e) => closeListedOffer(e, item.id)}>
+                    <IconButton id="profileButton" onClick={(e) => closeListedOffer(e, item.id)}>
                       <LockIcon />
+                    </IconButton>
+                  )}
+                  {isAdmin && !isProcessing && (
+                    <IconButton id="profileButton" onClick={(e) => deleteListedOffer(e, item.id)}>
+                      <DeleteIcon />
                     </IconButton>
                   )}
                 </Card>
@@ -226,6 +270,11 @@ const Profile = () => {
                     {item.title} ({item.rating} <StarIcon fontSize="inherit" sx={{ verticalAlign: 'text-top' }}/>)
                   </Typography>
                   <Typography>{item.message}</Typography>
+                  {isAdmin && !isProcessing && (
+                    <IconButton id="profileButton" onClick={(e) => deleteUserReview(e, item.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
                 </Card>
               ))}
               <Box sx={{ display: 'flex', margin: '20px' }}>
@@ -241,15 +290,17 @@ const Profile = () => {
           ) : <Typography gutterBottom align='center'>Brak danych</Typography>          
         }
 
-        <Button 
-          type="submit"
-          variant="contained"
-          color="error"
-          sx={{ width: '30%', alignSelf: 'center', borderRadius: 10 }}
-          onClick={removeAccount}
-        >
-          Usuń konto
-        </Button>
+        {viewAllowance && (
+          <Button 
+            type="submit"
+            variant="contained"
+            color="error"
+            sx={{ width: '30%', alignSelf: 'center', borderRadius: 10 }}
+            onClick={removeAccount}
+          >
+            Usuń konto
+          </Button>
+        )}
       </Card>
     </Backdrop>
   ) : (
