@@ -58,8 +58,9 @@ export interface WorkOfferCardData {
     max: number;
   };
   workingHours: {
-    start: string;
-    end: string;
+    dayOfWeek: number;
+    duration: number;
+    startHour: number;
   }[];
   creationDate: string;
 }

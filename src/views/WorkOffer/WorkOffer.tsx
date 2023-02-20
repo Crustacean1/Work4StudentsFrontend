@@ -7,6 +7,7 @@ import { Avatar, Backdrop, Box, Button, Card, CircularProgress,
   IconButton, Pagination, Rating, TextField, Typography } from '@mui/material';
 import strings from '../../const/strings';
 import PDFViewer from '../../components/PDFViewer';
+import { getImage } from '../../functions/getImage';
 import { getOffer } from '../../functions/getOffer';
 import { getResume } from '../../functions/getResume';
 import { emptyOffer } from '../../const/offers.const';
@@ -21,9 +22,10 @@ import { acceptApplication } from '../../functions/acceptApplication';
 import { rejectApplication } from '../../functions/rejectApplication';
 import { withdrawFromOffer } from '../../functions/withdrawFromOffer';
 import { getOfferApplications } from '../../functions/getOfferApplications';
-
 import './WorkOffer.css';
-import { getImage } from '../../functions/getImage';
+
+const DaysOfWeek = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek',
+  'Piątek', 'Sobota'];
 
 const WorkOffer = () => {
   const [offer, setOffer] = useState<WorkOfferData>(emptyOffer);
@@ -120,20 +122,19 @@ const WorkOffer = () => {
     });
   };
 
+  const workingHoursElement = (el: any) => {
+    return el.duration ? (
+      <Typography gutterBottom>
+        {DaysOfWeek[el.dayOfWeek]}: {el.startHour} - {el.startHour + el.duration}
+      </Typography>
+    ) : null;
+  };
+
   const { data: applicationsData } = store.userType === UserType.Company ? useQuery({
     queryKey: ['offerApplications', applicationsPage, offer.id],
     queryFn: () => getOfferApplications({ id: offer.id, page: applicationsPage }),
     keepPreviousData : true
   }) : { data: [] };
-
-  const startingHour = offer.workingHours ? new Date(offer.workingHours[0]?.start).toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-  }) : '';
-  const endingHour = offer.workingHours ? new Date(offer.workingHours[0]?.end).toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-  }) : '';
 
   const isCompany = store.userType === UserType.Company;
 
@@ -169,10 +170,10 @@ const WorkOffer = () => {
           <Typography gutterBottom>
             {`${strings.workOffer.rate} ${offer.payRange?.min} - ${offer.payRange?.max} zł/h`}
           </Typography>
-          <Typography gutterBottom>
+          <Typography id="offerDescTitle" gutterBottom>
             Godziny pracy:
-            {startingHour && endingHour ? ` ${startingHour} - ${endingHour}` : ` do uzgodnienia`}
           </Typography>
+          {offer.workingHours.map((el) => workingHoursElement(el))}
           <Typography id="offerDescTitle">
             {strings.workOffer.description}
           </Typography>
