@@ -16,7 +16,7 @@ export const testFunc = async () => {
 
     return data;
   } catch (err: any) {
-    alert(JSON.stringify(err.response.data));
+    
     console.log(err.response);
     return [];
   }

@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       return true;
     } catch (err: any) {
-      alert(JSON.stringify(err.response.data));
+      
       console.log(err.response);
     }
 
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       return true;
     } catch (err: any) {
-      alert(JSON.stringify(err.response.data));
+      
       console.log(err.response);
     }
 

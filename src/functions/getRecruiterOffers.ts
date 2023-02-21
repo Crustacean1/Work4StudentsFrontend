@@ -28,7 +28,7 @@ export const getRecruiterOffers = async ({ page, id, size }: GetRecruiterOffersP
 
     return data;
   } catch (err: any) {
-    alert(JSON.stringify(err.response.data));
+    
     console.log(err.response);
     return [];
   }

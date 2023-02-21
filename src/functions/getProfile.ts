@@ -20,7 +20,7 @@ export const getProfile = async (id?: string, type?: UserType) => {
 
     return data;
   } catch (err: any) {
-    alert(JSON.stringify(err.response.data));
+    
     console.log(err.response);
     return [];
   }

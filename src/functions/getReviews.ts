@@ -32,7 +32,7 @@ export const getReviews = async ({ page, id, type, size }: GetReviewsPayload) =>
 
     return data;
   } catch (err: any) {
-    alert(JSON.stringify(err.response.data));
+    
     console.log(err.response);
     return [];
   }
