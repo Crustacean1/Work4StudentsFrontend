@@ -52,6 +52,7 @@ export interface WorkOfferCardData {
     building: string;
   };
   title: string;
+  role: string;
   description: string;
   payRange: {
     min: number;
@@ -69,7 +70,6 @@ export interface WorkOfferData extends WorkOfferCardData {
   created: boolean;
   applied: boolean;
   applicationId?: string;
-  role: string;
   company: {
     id: string;
     name: string;

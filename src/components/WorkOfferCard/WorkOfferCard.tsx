@@ -32,7 +32,7 @@ const WorkOfferCard = ({ offer }: { offer: WorkOfferCardData }) => {
           /> */}
           <Box>
             <Typography id="companyTitle">
-              {offer.title}
+              {offer.role}
             </Typography> 
             <Typography id="companyDesc" color="text.secondary">
               {offer.address.region}
