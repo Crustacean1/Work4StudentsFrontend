@@ -11,9 +11,15 @@ export const editProfile = async (payload: EditProfilePayload) => {
 
     Object.keys(payload).forEach((key) => {
       // @ts-ignore
-      formData.append(key, payload[key]);
+      if(key !== "availability") formData.append(key, payload[key]);
     });
-  
+
+    payload.availability.forEach((el, index) => {
+      Object.keys(el).forEach((key) => {
+        formData.append("Availability[]", el[key]);
+      });
+    });
+
     const { data } = await axios
       .put(`${API}/Profiles/update/${
       store.userType === UserType.Student 

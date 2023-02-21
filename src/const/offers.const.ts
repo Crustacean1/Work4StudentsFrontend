@@ -90,8 +90,8 @@ export const emptyAvailability = () => {
 
   for (let day = 0; day < 7; day++) {
     const emptyDay = {
-      begin: dayjs().day(day),
-      end: dayjs().day(day),
+      begin: dayjs().day(day).minute(0),
+      end: dayjs().day(day).minute(0),
     };
     result.push(emptyDay);
   }

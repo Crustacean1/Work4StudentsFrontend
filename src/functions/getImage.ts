@@ -12,9 +12,6 @@ export const getImage = async (id?: string) => {
         'accept': '*/*',
         'Authorization': 'Bearer ' + store.token
       },
-      params: {
-        profileId: store.userProfileId
-      }
     });
 
     return data;

@@ -1,13 +1,15 @@
-import { countries } from "../const/countries.const";
 import strings from "../const/strings";
-import { EditProfileData, EditProfilePayload } from "../const/types.const";
-import { UserType, useStore } from "../stores/store";
+import { countries } from "../const/countries.const";
+import { EditProfileData } from "../const/types.const";
+import { Dayjs } from "dayjs";
 
-export const editProfileValidation = (values: EditProfilePayload) => {
+export const editProfileValidation = 
+  (values: EditProfileData, workingHours: { begin: Dayjs; end: Dayjs; }[]) => {
   let errors: EditProfileData = {
     Description: '',
     Education: '',
     PhoneNumber: '',
+    PositionName: '',
     EmailAddress: '',
     Experience: '',
     Country: '',
@@ -16,7 +18,8 @@ export const editProfileValidation = (values: EditProfilePayload) => {
     Street: '',
     Building: '',
     Availability: '',
-    ResumeFile: ''
+    ResumeFile: '',
+    Image: '',
   };
 
   [values.Education, values.Region, values.City].forEach((el) => {
@@ -48,7 +51,10 @@ export const editProfileValidation = (values: EditProfilePayload) => {
     errors.EmailAddress = strings.registerValidation.email;
   }
 
-  errors.Availability = '';
+  workingHours.forEach((el) => {
+    if (el.begin.format('HH:mm:ss') === 'Invalid Date' 
+      || el.end.format('HH:mm:ss') === 'Invalid Date') errors.Availability = strings.registerValidation.data;
+  });
 
   return errors;
 }

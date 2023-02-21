@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
-import { Autocomplete, Avatar, Backdrop, Box, Button, Card, CircularProgress, Grid, TextField, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Autocomplete, Avatar, Backdrop, Box, Button, Card, CircularProgress, 
+  Grid, TextField, Typography } from '@mui/material';
 import strings from '../../const/strings';
 import { imgDefault, profileFormData } from '../../const/profileForm.const';
 import './ProfileEdit.css';
 import { useFormik } from 'formik';
 import { countries, CountryType } from '../../const/countries.const';
-import { EditProfilePayload, ProfileData } from '../../const/types.const';
+import { EditProfileData, ProfileData } from '../../const/types.const';
 import { editProfileValidation } from '../../utils/editProfileValidation';
 import { editProfile } from '../../functions/editProfile';
 import { getBase64 } from '../../utils/base64';
@@ -15,12 +16,18 @@ import { getProfile } from '../../functions/getProfile';
 import { DataURIToBlob } from '../../utils/DataURIToBlob';
 import { getImage } from '../../functions/getImage';
 import { deleteResume } from '../../functions/deleteResume';
+import { emptyAvailability, offerFormData } from '../../const/offers.const';
+import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { Dayjs } from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import TimePickerElement from '../../components/TimePickerElement';
 
 const ProfileEdit = () => {
   const [errorList, setErrorList] = useState<any>({});
   const [avatarSrc, setAvatarSrc] = useState<string>('');
   const [profileData, setProfileData] = useState<ProfileData>();
   const [countryValue, setCountryValue] = useState<CountryType | null>(countries[0]);
+  const [availability, setAvailability] = useState<{ begin: Dayjs; end: Dayjs; }[]>(emptyAvailability());
   const [countryInput, setCountryInput] = useState<string>('');
   const [profilePic, setProfilePic] = useState<string>('');
 
@@ -40,11 +47,21 @@ const ProfileEdit = () => {
   };
 
   const callForEdit = async (data: any[]) => {
+    const availabilityData: { DayOfWeek: number; StartHour: number; Duration: number; }[] = [];
+    availability.forEach((el) => {
+      availabilityData.push({
+        DayOfWeek: el.begin.day(),
+        StartHour: el.begin.hour(),
+        Duration: el.end.hour() - el.begin.hour()
+      });
+    });
+
     const profileArray = Array.from(data)
       .map(el => {
         return `"${el[0]}": "${el[1]}"`;
       });
     const JSONdata = JSON.parse('{' + profileArray + '}');
+    JSONdata.availability = availabilityData;
     const dataArray = Array.from(data);
 
     // Additional data for BE reasons
@@ -78,7 +95,7 @@ const ProfileEdit = () => {
       City: newData?.city || '',
       Street: newData?.street || '',
       Building: newData?.building || '',
-      Availability: newData?.availability || null,
+      Availability: newData?.availability || [],
       ResumeFile: newData?.resume || '',
       Image: newData?.photo || ''
     };
@@ -103,8 +120,8 @@ const ProfileEdit = () => {
     getProfilePic();
   }, []);
 
-  const validate = (values: EditProfilePayload) => {
-    let errors = editProfileValidation(values);
+  const validate = (values: EditProfileData) => {
+    let errors = editProfileValidation(values, availability);
 
     setErrorList(errors);
     return Object.values(errors).filter((error: any) => error).length ? errors : {};
@@ -123,7 +140,7 @@ const ProfileEdit = () => {
       City: profileData?.city || '',
       Street: profileData?.street || '',
       Building: profileData?.building || '',
-      Availability: profileData?.availability || null,
+      Availability: profileData?.availability?.toString() || '',
       ResumeFile: profileData?.resume || '',
       Image: profileData?.photo || ''
     },
@@ -204,6 +221,18 @@ const ProfileEdit = () => {
     ) : null
   };
 
+  const onBeginChange = (newValue: Dayjs | null, id: number) => {
+    const newAvailability = [...availability];
+    if (newValue) newAvailability[id].begin = newValue;
+    setAvailability(newAvailability);
+  };
+
+  const onEndChange = (newValue: Dayjs | null, id: number) => {
+    const newAvailability = [...availability];
+    if (newValue) newAvailability[id].end = newValue;
+    setAvailability(newAvailability);
+  };
+
   return profileData ? (
     <Backdrop open className="registerBackground">
       <Card id="editProfileCard" sx={{ boxShadow: 12, borderRadius: 10 }}>
@@ -224,6 +253,24 @@ const ProfileEdit = () => {
             </Button>
           </Box>
           {Object.values(profileFormData.column).map((el) => gridElement(el))}
+          {store.userType === UserType.Student && (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Typography id="timeTitle">Twoja dostępność:</Typography>
+              {Object.values(offerFormData.days).map((el) => 
+                <TimePickerElement
+                  id={el.id}
+                  key={el.id}
+                  name={el.name}
+                  begin={availability[el.id].begin}
+                  end={availability[el.id].end}
+                  labelSX={{ width: '48%', marginTop: '5px', marginRight: '15px' }}
+                  containerId="profileDateContainer"
+                  onBeginChange={onBeginChange}
+                  onEndChange={onEndChange}
+                />
+              )}
+            </LocalizationProvider>
+          )}
           {store.userType === UserType.Student && (
             <Box id="editCV">
               <div>

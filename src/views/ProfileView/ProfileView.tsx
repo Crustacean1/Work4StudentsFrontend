@@ -11,7 +11,7 @@ import strings from '../../const/strings';
 import PDFViewer from '../../components/PDFViewer';
 import { getImage } from '../../functions/getImage';
 import { useAuth } from '../../contexts/AuthContext';
-import { ProfileData } from '../../const/types.const';
+import { DaysOfWeek, ProfileData } from '../../const/types.const';
 import { closeOffer } from '../../functions/closeOffer';
 import { getProfile } from '../../functions/getProfile';
 import { getReviews } from '../../functions/getReviews';
@@ -74,6 +74,14 @@ const Profile = () => {
       && store.userType === item.type) || (isAdmin && type === item.type) ? (
       <Typography key={item.label} variant="h6" gutterBottom>
         {item.label}: {value}
+      </Typography>
+    ) : null;
+  };
+
+  const workingHoursElement = (el: any) => {
+    return el.duration ? (
+      <Typography gutterBottom>
+        {DaysOfWeek[el.dayOfWeek]}: {el.startHour} - {el.startHour + el.duration}
       </Typography>
     ) : null;
   };
@@ -199,6 +207,7 @@ const Profile = () => {
           </Box>
         </Box>
         {profileForm.profile.info.map((item) => profileElement(item))}
+        {profileData.availability?.map((el) => workingHoursElement(el))}
         {viewAllowance && isStudent && applicationsData?.items && applicationsData.items.length > 0 && (
             <div>
               <Typography variant="h6" gutterBottom>Aplikacje:</Typography>

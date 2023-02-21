@@ -17,7 +17,7 @@ export interface RegisterData {
 }
 
 export interface ProfileData {
-  availability: null;
+  availability: any[];
   building: string;
   city: string;
   companyName?: string;
@@ -88,6 +88,7 @@ export interface AddOfferData {
   payrangeMin: string;
   payrangeMax: string;
   role: string;
+  time?: string;
 }
 
 export interface EditProfileData {
@@ -95,16 +96,21 @@ export interface EditProfileData {
   Education: string;
   PhoneNumber: string;
   EmailAddress: string;
+  PositionName: string;
   Experience: string;
   Country: string;
   Region: string;
   City: string;
   Street: string;
   Building: string;
-  Availability: string | null;
+  Availability: string;
   ResumeFile: string;
+  Image: string;
 }
 
 export interface EditProfilePayload extends EditProfileData {
-  Image: string;
+  availability: { [key: string]: Blob | string }[];
 }
+
+export const DaysOfWeek = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek',
+  'Piątek', 'Sobota'];

@@ -1,4 +1,4 @@
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { useState } from 'react';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -13,11 +13,10 @@ import { addOfferValidation } from '../../utils/addOfferValidation';
 import { countries } from '../../const/countries.const';
 import { createOffer } from '../../functions/createOffer';
 import { useNavigate } from 'react-router-dom';
-
-const emptyAvailabilityObj = emptyAvailability();
+import TimePickerElement from '../../components/TimePickerElement';
 
 const AddOffer = () => {
-  const [availability, setAvailability] = useState<{ begin: Dayjs; end: Dayjs; }[]>(emptyAvailabilityObj);
+  const [availability, setAvailability] = useState<{ begin: Dayjs; end: Dayjs; }[]>(emptyAvailability());
   const [errorList, setErrorList] = useState<any>({});
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
@@ -42,7 +41,7 @@ const AddOffer = () => {
       });
     
     const JSONdata = JSON.parse('{' + offerData + '}');
-    JSONdata.availability = availabilityData;
+    JSONdata.workingHours = availabilityData;
     
     await createOffer(JSONdata).then(response => {
       setIsProcessing(false);
@@ -52,7 +51,7 @@ const AddOffer = () => {
   };
 
   const validate = (values: AddOfferData) => {
-    let errors = addOfferValidation(values);
+    let errors = addOfferValidation(values, availability);
 
     setErrorList(errors);
     return Object.values(errors).filter((error: any) => error).length ? errors : {};
@@ -136,34 +135,16 @@ const AddOffer = () => {
     )
   };
 
-  const timeElement = (params: any) => <TextField sx={{ width: '48%', marginTop: '5px' }} {...params} />
+  const onBeginChange = (newValue: Dayjs | null, id: number) => {
+    const newAvailability = [...availability];
+    if (newValue) newAvailability[id].begin = newValue;
+    setAvailability(newAvailability);
+  };
 
-  const timePickerElement = (el: { id: number; name: string; }) => {
-    return (
-      <div id="dateContainer" key={el.id}>
-        <Typography>{el.name}</Typography>
-        <TimePicker
-          label={'Godzina rozpoczęcia pracy'}
-          value={availability[el.id].begin}
-          onChange={(newValue) => {
-            const newAvailability = [...availability];
-            newAvailability[el.id].begin = newValue || newAvailability[el.id].begin;
-            setAvailability(newAvailability);
-          }}
-          renderInput={timeElement}
-        />
-        <TimePicker
-          label={'Godzina zakończenia pracy'}
-          value={availability[el.id].end}
-          onChange={(newValue) => {
-            const newAvailability = [...availability];
-            if (newValue) newAvailability[el.id].end = newValue;
-            setAvailability(newAvailability);
-          }}
-          renderInput={timeElement}
-        />
-      </div>
-    )
+  const onEndChange = (newValue: Dayjs | null, id: number) => {
+    const newAvailability = [...availability];
+    if (newValue) newAvailability[id].end = newValue;
+    setAvailability(newAvailability);
   };
 
   return (
@@ -173,7 +154,17 @@ const AddOffer = () => {
           {Object.values(offerFormData.column).map((el) => gridElement(el))}
           <Typography width={'95%'} marginY={1}>Godziny preferowanej dostępności:</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            {Object.values(offerFormData.days).map((el) => timePickerElement(el))}
+            {Object.values(offerFormData.days).map((el) => 
+              <TimePickerElement
+                id={el.id}
+                key={el.id}
+                name={el.name}
+                begin={availability[el.id].begin}
+                end={availability[el.id].end}
+                onBeginChange={onBeginChange}
+                onEndChange={onEndChange}
+              />
+            )}
           </LocalizationProvider>
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             <Button variant="contained" type="submit" id="addOfferButton">

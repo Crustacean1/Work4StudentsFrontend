@@ -30,3 +30,13 @@
   align-items: center;
   justify-content: space-between;
 }
+
+#profileDateContainer {
+  width: 90%;
+  margin: 10px;
+}
+
+#timeTitle {
+  width: 90%;
+  font-weight: bold;
+}

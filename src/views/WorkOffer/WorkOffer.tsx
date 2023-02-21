@@ -12,20 +12,18 @@ import { getOffer } from '../../functions/getOffer';
 import { getResume } from '../../functions/getResume';
 import { emptyOffer } from '../../const/offers.const';
 import { toDateTime } from '../../utils/timeConverter';
-import { WorkOfferData } from '../../const/types.const';
 import { UserType, useStore } from '../../stores/store';
 import { reviewOffer } from '../../functions/reviewOffer';
 import { imgDefault } from '../../const/profileForm.const';
 import { applyForOffer } from '../../functions/applyForOffer';
 import { reviewStudent } from '../../functions/reviewStudent';
+import { DaysOfWeek, WorkOfferData } from '../../const/types.const';
 import { acceptApplication } from '../../functions/acceptApplication';
 import { rejectApplication } from '../../functions/rejectApplication';
 import { withdrawFromOffer } from '../../functions/withdrawFromOffer';
 import { getOfferApplications } from '../../functions/getOfferApplications';
 import './WorkOffer.css';
-
-const DaysOfWeek = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek',
-  'Piątek', 'Sobota'];
+import { deleteOffer } from '../../functions/deleteOffer';
 
 const WorkOffer = () => {
   const [offer, setOffer] = useState<WorkOfferData>(emptyOffer);
@@ -122,9 +120,19 @@ const WorkOffer = () => {
     });
   };
 
+  const removeOffer = async () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    await deleteOffer(offer.id).then(response => {
+      setIsProcessing(false);
+      if (!Array.isArray(response)) navigate('/admin-panel');
+    });
+  };
+
   const workingHoursElement = (el: any) => {
     return el.duration ? (
-      <Typography gutterBottom>
+      <Typography key={el.dayOfWeek} gutterBottom>
         {DaysOfWeek[el.dayOfWeek]}: {el.startHour} - {el.startHour + el.duration}
       </Typography>
     ) : null;
@@ -137,6 +145,7 @@ const WorkOffer = () => {
   }) : { data: [] };
 
   const isCompany = store.userType === UserType.Company;
+  const isAdmin = store.userType === UserType.Admin;
 
   return (
     <Backdrop open className="registerBackground">
@@ -159,7 +168,7 @@ const WorkOffer = () => {
               src={offerPic ? `data:image/jpeg;base64,${offerPic}` : imgDefault}
               alt="The company's logo."
               sx={{ marginLeft: '10px', maxWidth: '40%' }}
-              onClick={() => navigate(`/profile/${offer.company.id}`)}
+              onClick={() => navigate(isAdmin ? `/profile/1/${offer.company.id}` : `/profile/${offer.company.id}`)}
             />
           </Box>
         </Box>
@@ -304,6 +313,18 @@ const WorkOffer = () => {
               {!isProcessing && strings.workOffer.sendApplication}
             </Button>
           </Box>
+        )}
+
+        {isAdmin && (
+          <Button 
+            type="submit"
+            variant="contained"
+            color="error"
+            sx={{ width: '30%', alignSelf: 'center', borderRadius: 10 }}
+            onClick={removeOffer}
+          >
+            Usuń ofertę
+          </Button>
         )}
 
         <Box sx={{ height: '5%' }} className="flexRow" id="footnote">
